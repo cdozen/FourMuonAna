@@ -14,6 +14,7 @@ rootuple = cms.EDAnalyzer('MuMuGammaRootupler',
                           OnlyGen = cms.bool(False),
 								  upsilon_mass = cms.double(9.4603), #9.4603. 3.0969
 								  triggerCuts = cms.uint32(36),  # 36 for Upsilon, 73 for Jpsi
+								  best4muonCand = cms.bool(False),
                           SecondSource = cms.SecSource(
 								        "EmbeddedRootSource",
 										   fileNames = cms.untracked.vstring(

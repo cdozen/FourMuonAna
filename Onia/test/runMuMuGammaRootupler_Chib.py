@@ -29,7 +29,7 @@ process.TFileService = cms.Service("TFileService",
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
 
-process.load('MuMuGammaAna.Onia.MuMuGammaRootupler_cfi')
+process.load('FourMuonAna.Onia.MuMuGammaRootupler_cfi')
 process.p = cms.Path(process.rootuple)
 
 process.rootuple.upsilon_mass = cms.double(9.4603)
