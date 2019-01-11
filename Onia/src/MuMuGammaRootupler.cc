@@ -947,6 +947,10 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 		//std::cout<<"trigger:"<<trigger<<std::endl;
 	}
 
+	//if (run < 316569)		//a temporary run number selection, 316569 is the first run of 2018A prompt reco v3
+	if(true)
+	{
+
 	dimuon_pdgId = 0;
 	mother_pdgId = 0;
 	irank = 0;
@@ -1418,6 +1422,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 
 	if (nGoodUpsilonCand>0) onia_tree->Fill();
 
+	}		//end run number selection
 }
 
 

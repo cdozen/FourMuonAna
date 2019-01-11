@@ -11,6 +11,7 @@
 
 void readTree2018::Loop()
 {
+	TString plot_format = "png";
 	if (fChain == 0) return;
 
 	std::vector<TLorentzVector> mu1_p4_vector;
@@ -250,8 +251,8 @@ void readTree2018::Loop()
 
 		//if ((trigger&2)==0) continue; //2016 trigger
 		//if ((trigger&128)==0) continue;
-		if ((trigger&256)==0) continue;
-		//if ((trigger&512)==0) continue; //open muon
+		if ((trigger&256)==0) continue;			//HLT_Trimuon5_3p5_2_Upsilon_Muon
+		//if ((trigger&512)==0) continue;		//HLT_TrimuonOpen_5_3p5_2_Upsilon_Muon
 
 
 		//orignial events in the MuOnia dataset
@@ -419,29 +420,29 @@ void readTree2018::Loop()
 
 		TCanvas *c1 = new TCanvas("c1","c1");
 		sfourMuMass->Draw("e1");
-		c1->SaveAs("plots0p6/signalFourMuMass.pdf");
+		//c1->SaveAs("plots0p6/signalFourMuMass."+plot_format);
 
 
 		//before cuts, mix and mix zoom in
 		hfourMuMass_mix->SetMarkerStyle(24);
 		hfourMuMass_mix->SetMarkerColor(kRed);
 		hfourMuMass_mix->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_mix.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_mix."+plot_format);
 		hfourMuMass_mix_smallrange->SetMarkerStyle(24);
 		hfourMuMass_mix_smallrange->SetMarkerColor(kBlue);
 		hfourMuMass_mix_smallrange->GetYaxis()->SetRangeUser(0,200);
 		hfourMuMass_mix_smallrange->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_mix_smallrange.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_mix_smallrange."+plot_format);
 
 		//before cuts, compare original vs mix
 		hfourMuMass->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass."+plot_format);
 		hfourMuMass_mix->Draw("e1same");
-		c1->SaveAs("plots0p6/hfourMuMass_origVSmix.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_origVSmix."+plot_format);
 
 		//after cuts, orignal
 		hfourMuMass_aftercut->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_afterCut.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_afterCut."+plot_format);
 		float scaleEntries = hfourMuMass_aftercut_smallrange->Integral();
 		/*hfourMuMass_aftercut_smallrange->SetBinContent(23,0);
 		  hfourMuMass_aftercut_smallrange->SetBinContent(24,0);
@@ -454,39 +455,45 @@ void readTree2018::Loop()
 		  hfourMuMass_aftercut_smallrange->SetBinContent(31,0);
 		  hfourMuMass_aftercut_smallrange->SetBinContent(32,0);*/
 		hfourMuMass_aftercut_smallrange->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_afterCut_smallrange.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_afterCut_smallrange."+plot_format);
 
 		//after cuts, mix
 		hfourMuMass_mix_aftercut->SetMarkerStyle(24);
 		hfourMuMass_mix_aftercut->SetMarkerColor(kRed);
 		hfourMuMass_mix_aftercut->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_mix_afterCut.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_mix_afterCut."+plot_format);
 
 		//after cuts, compare original vs mix
 		hfourMuMass_aftercut->Draw("e1");
 		hfourMuMass_mix_aftercut->Draw("e1same");
-		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSmix.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSmix."+plot_format);
 
 		//after cuts, mix physics bkg
 		hfourMuMass_physkbg_mix->SetMarkerStyle(22);
 		hfourMuMass_physkbg_mix->SetMarkerColor(kBlue);
 		hfourMuMass_physkbg_mix->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_physkbg_mix.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_physkbg_mix."+plot_format);
 		hfourMuMass_physkbg_mix_smallrange->SetMarkerStyle(22);
 		hfourMuMass_physkbg_mix_smallrange->SetMarkerColor(kBlue);
 		hfourMuMass_physkbg_mix_smallrange->Draw("e1");
-		c1->SaveAs("plots0p6/hfourMuMass_physkbg_mix_smallrange.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMass_physkbg_mix_smallrange."+plot_format);
 
 		//after cuts, compare original vs mixPhysPkg
+		hfourMuMass_aftercut->SetMarkerStyle(20);
+		hfourMuMass_aftercut->SetMarkerColor(kBlack);
 		hfourMuMass_aftercut->Draw("e1");
+		std::cout << "hfourMuMass_aftercut->Integral() = " << hfourMuMass_aftercut->Integral() << std::endl;
 		hfourMuMass_physkbg_mix->Scale(hfourMuMass_aftercut->Integral()/hfourMuMass_physkbg_mix->Integral());
 		hfourMuMass_physkbg_mix->Draw("e1same");
-		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg.pdf");
+		std::cout << "hfourMuMass_physkbg_mix->Integral() = " << hfourMuMass_physkbg_mix->Integral() << std::endl;
+		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg."+plot_format);
+		hfourMuMass_aftercut_smallrange->SetMarkerStyle(20);
+		hfourMuMass_aftercut_smallrange->SetMarkerColor(kBlack);
 		hfourMuMass_aftercut_smallrange->Draw("e1");
 		hfourMuMass_physkbg_mix_smallrange->Scale(scaleEntries/hfourMuMass_physkbg_mix_smallrange->Integral());
 		//hfourMuMass_physkbg_mix_smallrange->Scale(scaleEntries*5/2/hfourMuMass_physkbg_mix_smallrange->Integral());  //scale for different binning
 		hfourMuMass_physkbg_mix_smallrange->Draw("e1same");
-		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg_smallrange.pdf");
+		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg_smallrange."+plot_format);
 
 		//after cuts, compare original vs mixPhysPkg
 		hfourMuMass_aftercut->Draw("e1");
@@ -495,70 +502,70 @@ void readTree2018::Loop()
 		hfourMuMassBoost_physkbg_mix->Scale(hfourMuMass_aftercut->Integral()/hfourMuMassBoost_physkbg_mix->Integral());
 		hfourMuMassBoost_physkbg_mix->Draw("e1");
 		hfourMuMass_aftercut->Draw("e1same");
-		c1->SaveAs("plots0p6/hfourMuMassBoost_afterCut_origVSphyskbg.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMassBoost_afterCut_origVSphyskbg."+plot_format);
 		hfourMuMass_aftercut_smallrange->Draw("e1");
 		hfourMuMassBoost_physkbg_mix_smallrange->SetMarkerStyle(23);
 		hfourMuMassBoost_physkbg_mix_smallrange->SetMarkerColor(kRed);
 		hfourMuMassBoost_physkbg_mix_smallrange->Scale(scaleEntries*5/2/hfourMuMassBoost_physkbg_mix_smallrange->Integral());
 		hfourMuMassBoost_physkbg_mix_smallrange->Draw("e1same");
-		c1->SaveAs("plots0p6/hfourMuMassBoost_afterCut_origVSphyskbg_smallrange.pdf");
+		//c1->SaveAs("plots0p6/hfourMuMassBoost_afterCut_origVSphyskbg_smallrange."+plot_format);
 
 		TCanvas *c9 = new TCanvas("c9","c9");
 		Ymumu2D->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2D.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2D."+plot_format);
 		Ymumu2DBoost->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2DBoost.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2DBoost."+plot_format);
 		Ymumu2D_aftercut->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2D_aftercut.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2D_aftercut."+plot_format);
 		Ymumu2DBoost_aftercut->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2DBoost_aftercut.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2DBoost_aftercut."+plot_format);
 		Ymumu2D_zerobias_mix->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2D_zerobias_mix.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2D_zerobias_mix."+plot_format);
 		Ymumu2D_physkbg_mix->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2D_physkbg_mix.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2D_physkbg_mix."+plot_format);
 		Ymumu2DBoost_physkbg_mix->Draw("colz");
-		c9->SaveAs("plots0p6/Ymumu2DBoost_physkbg_mix.pdf");
+		//c9->SaveAs("plots0p6/Ymumu2DBoost_physkbg_mix."+plot_format);
 
 		TCanvas *c10 = new TCanvas("c10","c10");
 		//Ypt1->Scale(1./Ypt1->Integral());
 		Ypt1->Draw("e1");
-		c10->SaveAs("plots0p6/Ypt1.pdf");
+		//c10->SaveAs("plots0p6/Ypt1."+plot_format);
 		//Ypt2->Scale(Ypt1->Integral()/Ypt2->Integral());
 		//Ypt2->SetMarkerColor(kRed);
 		Ypt2->Draw("e1");
-		c10->SaveAs("plots0p6/Ypt2.pdf");
+		//c10->SaveAs("plots0p6/Ypt2."+plot_format);
 		//Ypt3->Scale(Ypt1->Integral()/Ypt3->Integral());
 		//Ypt3->SetMarkerColor(kBlue);
 		Ypt3->Draw("e1");
-		c10->SaveAs("plots0p6/Ypt3.pdf");
+		//c10->SaveAs("plots0p6/Ypt3."+plot_format);
 		//Ypt4->Scale(Ypt1->Integral()/Ypt4->Integral());
 		//Ypt4->SetMarkerColor(kMagenta);
 		Ypt4->Draw("e1");
-		c10->SaveAs("plots0p6/Ypt4.pdf");
+		//c10->SaveAs("plots0p6/Ypt4."+plot_format);
 		Y2Dpteta->Draw("colz");
-		c10->SaveAs("plots0p6/Y2Dpteta.pdf");
+		//c10->SaveAs("plots0p6/Y2Dpteta."+plot_format);
 		Y2Dptphi->Draw("colz");
-		c10->SaveAs("plots0p6/Y2Dptphi.pdf");
+		//c10->SaveAs("plots0p6/Y2Dptphi."+plot_format);
 		Y2Detaphi->Draw("colz");
-		c10->SaveAs("plots0p6/Y2Detaphi.pdf");
+		//c10->SaveAs("plots0p6/Y2Detaphi."+plot_format);
 		mu12mass->Draw();
 		mu12massEBE->SetLineColor(kRed);
 		mu12massEBE->Draw("same");
-		c10->SaveAs("plots0p6/Ymass.pdf");
+		//c10->SaveAs("plots0p6/Ymass."+plot_format);
 		mu34massBkg->Draw("e1");
 		mu34massBkg->GetYaxis()->SetRangeUser(0,50);
-		c10->SaveAs("plots0p6/mu34massBkg.pdf");
+		//c10->SaveAs("plots0p6/mu34massBkg."+plot_format);
 		mu34massBkgH->Draw("e1");
 		mu34massBkgH->GetYaxis()->SetRangeUser(0,50);
-		c10->SaveAs("plots0p6/mu34massBkgH.pdf");
+		//c10->SaveAs("plots0p6/mu34massBkgH."+plot_format);
 		mu34mass->Draw("e1");
 		mu34mass->GetYaxis()->SetRangeUser(0,50);
-		c10->SaveAs("plots0p6/mu34mass.pdf");
+		//c10->SaveAs("plots0p6/mu34mass."+plot_format);
 		mu34massBkg->SetMarkerColor(kRed);
 		mu34massBkg->Draw("e1same");
 		mu34massBkgH->SetMarkerColor(kBlue);
 		mu34massBkgH->Draw("e1same");
-		c10->SaveAs("plots0p6/mu34massOverlay.pdf");
+		//c10->SaveAs("plots0p6/mu34massOverlay."+plot_format);
 
 
 		TCanvas *c8 = new TCanvas("c8","c8");
@@ -567,20 +574,20 @@ void readTree2018::Loop()
 		hnCand->Scale((float)hnCand_aftercut->Integral()/hnCand->Integral());
 		hnCand->SetMarkerSize(0.7);
 		hnCand->Draw("same");
-		c8->SaveAs("plots0p6/nCand.pdf");
+		//c8->SaveAs("plots0p6/nCand."+plot_format);
 		shnCand_aftercut->SetMarkerColor(kRed);
 		shnCand_aftercut->Draw("e1");
 		shnCand->Scale((float)shnCand_aftercut->Integral()/shnCand->Integral());
 		shnCand->SetMarkerSize(0.7);
 		shnCand->Draw("same");
-		c8->SaveAs("plots0p6/nCand_signal.pdf");
+		//c8->SaveAs("plots0p6/nCand_signal."+plot_format);
 		vProbMix->SetMarkerColor(kBlue);
 		vProbMix->Draw("e1");
 		c8->SetLogy();
 		vProbSig->Scale((float)vProbMix->Integral()/vProbSig->Integral());
 		vProbSig->SetMarkerColor(kRed);
 		vProbSig->Draw("same");
-		c8->SaveAs("plots0p6/vProb_SandB.pdf");
+		//c8->SaveAs("plots0p6/vProb_SandB."+plot_format);
 
 
 		TCanvas *c7 = new TCanvas("c7","c7");	
@@ -589,7 +596,7 @@ void readTree2018::Loop()
 		hfourMuMass_aftercut_highLumi->Scale((float)hfourMuMass_aftercut_lowLumi->Integral()/hfourMuMass_aftercut_highLumi->Integral());
 		hfourMuMass_aftercut_highLumi->SetMarkerColor(kBlue);
 		hfourMuMass_aftercut_highLumi->Draw("e1same");
-		c7->SaveAs("plots0p6/compareMassvsLumi.pdf");
+		//c7->SaveAs("plots0p6/compareMassvsLumi."+plot_format);
 
 		hfourMuMass_mix_lowLumi->SetMarkerColor(kRed);
 		hfourMuMass_mix_lowLumi->Draw("e1");
@@ -598,14 +605,14 @@ void readTree2018::Loop()
 		hfourMuMass_mix_highLumi->Scale((float)hfourMuMass_mix_lowLumi->Integral()/hfourMuMass_mix_highLumi->Integral());
 		hfourMuMass_mix_highLumi->SetMarkerColor(kBlue);
 		hfourMuMass_mix_highLumi->Draw("e1same");
-		c7->SaveAs("plots0p6/compareMassvsLumi_pileupbkg.pdf");
+		//c7->SaveAs("plots0p6/compareMassvsLumi_pileupbkg."+plot_format);
 
 		hfourMuMass_aftercut_lowLumi_smallrange->SetMarkerColor(kRed);
 		hfourMuMass_aftercut_lowLumi_smallrange->Draw("e1");
 		hfourMuMass_aftercut_highLumi_smallrange->Scale((float)hfourMuMass_aftercut_lowLumi_smallrange->Integral()/hfourMuMass_aftercut_highLumi_smallrange->Integral());
 		hfourMuMass_aftercut_highLumi_smallrange->SetMarkerColor(kBlue);
 		hfourMuMass_aftercut_highLumi_smallrange->Draw("e1same");
-		c7->SaveAs("plots0p6/compareMassvsLumi_smallrange.pdf");
+		//c7->SaveAs("plots0p6/compareMassvsLumi_smallrange."+plot_format);
 
 		hfourMuMass_mix_lowLumi_smallrange->SetMarkerColor(kRed);
 		hfourMuMass_mix_lowLumi_smallrange->Draw("e1");
@@ -614,7 +621,7 @@ void readTree2018::Loop()
 		hfourMuMass_mix_highLumi_smallrange->Scale((float)hfourMuMass_mix_lowLumi_smallrange->Integral()/hfourMuMass_mix_highLumi_smallrange->Integral());
 		hfourMuMass_mix_highLumi_smallrange->SetMarkerColor(kBlue);
 		hfourMuMass_mix_highLumi_smallrange->Draw("e1same");
-		c7->SaveAs("plots0p6/compareMassvsLumi_pileupbkg_smallrange.pdf");
+		//c7->SaveAs("plots0p6/compareMassvsLumi_pileupbkg_smallrange."+plot_format);
 
 
 
@@ -629,7 +636,7 @@ void readTree2018::Loop()
 		smu4Medium->SetMarkerColor(kMagenta);
 		smu4Medium->SetMarkerStyle(24);
 		smu4Medium->Draw("e1same");
-		c5->SaveAs("plots0p6/signalMuonQua.pdf");
+		//c5->SaveAs("plots0p6/signalMuonQua."+plot_format);
 
 		sfourMuFitmu1Pt->GetXaxis()->SetTitle("muon p_{T} [GeV]");
 		sfourMuFitmu1Pt->GetYaxis()->SetRangeUser(0,1000);
@@ -642,7 +649,7 @@ void readTree2018::Loop()
 		sfourMuFitmu4Pt->SetMarkerColor(kMagenta);
 		sfourMuFitmu4Pt->SetMarkerStyle(24);
 		sfourMuFitmu4Pt->Draw("e1same");
-		c5->SaveAs("plots0p6/signalPt.pdf");
+		//c5->SaveAs("plots0p6/signalPt."+plot_format);
 
 		hmu1Medium->GetXaxis()->SetTitle("Medium muon");
 		hmu1Medium->GetYaxis()->SetRangeUser(0,700);
@@ -655,7 +662,7 @@ void readTree2018::Loop()
 		hmu4Medium->SetMarkerColor(kMagenta);
 		hmu4Medium->SetMarkerStyle(24);
 		hmu4Medium->Draw("e1same");
-		c5->SaveAs("plots0p6/bkgMuonQua.pdf");
+		//c5->SaveAs("plots0p6/bkgMuonQua."+plot_format);
 
 		hfourMuFitmu1Pt->GetXaxis()->SetTitle("muon p_{T} [GeV]");
 		hfourMuFitmu1Pt->GetYaxis()->SetRangeUser(0,500);
@@ -668,20 +675,20 @@ void readTree2018::Loop()
 		hfourMuFitmu4Pt->SetMarkerColor(kMagenta);
 		hfourMuFitmu4Pt->SetMarkerStyle(24);
 		hfourMuFitmu4Pt->Draw("e1same");
-		c5->SaveAs("plots0p6/bkgPt.pdf");
+		//c5->SaveAs("plots0p6/bkgPt."+plot_format);
 
 		TCanvas *c6 = new TCanvas("c6","c6");
 		nVertices->Sumw2();
 		nVertices->Draw();
-		c6->SaveAs("plots0p6/nVertices.pdf");
+		//c6->SaveAs("plots0p6/nVertices."+plot_format);
 		nVertices_2012->SetMarkerColor(kRed);
 		nVertices_2012->Scale((float)nVertices->Integral()/nVertices_2012->Integral());
 		nVertices_2012->GetXaxis()->SetRangeUser(0,70);
 		nVertices_2012->Draw();
 		nVertices->Draw("same");
-		c6->SaveAs("plots0p6/nVerticesAnd2012.pdf");
+		//c6->SaveAs("plots0p6/nVerticesAnd2012."+plot_format);
 		nVertices_fourmuon_aftercut->Draw("e1");
-		c6->SaveAs("plots0p6/nVertices_aftercuts.pdf");
+		//c6->SaveAs("plots0p6/nVertices_aftercuts."+plot_format);
 
 
 		nVertices_fourmuon->SetMarkerColor(kRed);
@@ -698,12 +705,12 @@ void readTree2018::Loop()
 		nVertices_fourmuon_aftercut->Divide(nVertices);
 		nVertices_fourmuon_aftercut->GetYaxis()->SetTitle("Normalized N_{4-muon candidates} (13-23 GeV)");
 		nVertices_fourmuon_aftercut->Draw("e1same");
-		c6->SaveAs("plots0p6/4muonCandsPerEvt_compare.pdf");
+		//c6->SaveAs("plots0p6/4muonCandsPerEvt_compare."+plot_format);
 		nVertices_fourmuon_aftercut->GetYaxis()->SetLabelSize(0.02);
 		nVertices_fourmuon_aftercut->GetYaxis()->SetRangeUser(-0.002,0.04);
 		nVertices_fourmuon_aftercut->GetXaxis()->SetRangeUser(0,90);
 		nVertices_fourmuon_aftercut->Draw("e1");
-		c6->SaveAs("plots0p6/4muonCandsPerEvt_aftercut.pdf");
+		//c6->SaveAs("plots0p6/4muonCandsPerEvt_aftercut."+plot_format);
 
 
 		/*	TCanvas *c2 = new TCanvas("c2","c2");
@@ -720,13 +727,13 @@ void readTree2018::Loop()
 			gbkRejMuonPtCut->SetLineColor(kBlue);
 			gbkRejMuonPtCut->SetMarkerStyle(22);
 			gbkRejMuonPtCut->Draw("PL");
-			c2->SaveAs("plots0p6/EffMuonPtCut.pdf");
+			c2->SaveAs("plots0p6/EffMuonPtCut."+plot_format);
 
 			TGraph *gSignificanceMuonPtCut = new TGraph(5, muonPtCut, significanceMuonPtCut);
 			gSignificanceMuonPtCut->Draw("APL");
 			gSignificanceMuonPtCut->GetXaxis()->SetTitle("muon p_{T} [GeV]");
 			gSignificanceMuonPtCut->GetYaxis()->SetTitle("S/sqrt(B)");
-			c2->SaveAs("plots0p6/significanceMuonPtCut.pdf");
+			c2->SaveAs("plots0p6/significanceMuonPtCut."+plot_format);
 			*/
 		TCanvas *c3 = new TCanvas("c3","c3");
 		TGraph *gSigEffVProbCut = new TGraph(14, vProbCut, sigEffVProbCut);
@@ -743,14 +750,14 @@ void readTree2018::Loop()
 		gbkRejVProbCut->SetLineColor(kBlue);
 		gbkRejVProbCut->SetMarkerStyle(22);
 		gbkRejVProbCut->Draw("PL");
-		c3->SaveAs("plots0p6/EffVProbCut.pdf");
+		//c3->SaveAs("plots0p6/EffVProbCut."+plot_format);
 
 		TGraph *gSignificanceVProbCut = new TGraph(14, vProbCut, significanceVProbCut);
 		gSignificanceVProbCut->Draw("APL");
 		gSignificanceVProbCut->GetXaxis()->SetTitle("4 muons vertex fit probability [GeV]");
 		gSignificanceVProbCut->GetYaxis()->SetTitle("S/sqrt(B)");
 		gSignificanceVProbCut->GetXaxis()->SetRangeUser(0.001,0.1);
-		c3->SaveAs("plots0p6/significanceVProbCut.pdf");
+		//c3->SaveAs("plots0p6/significanceVProbCut."+plot_format);
 
 		TCanvas *c4 = new TCanvas("c4","c4");
 		TGraph *gSigEffQuaCut = new TGraph(3, quaCut, sigEffQuaCut);
@@ -781,7 +788,7 @@ void readTree2018::Loop()
 		gbkRejQuaCut_m->SetLineColor(kBlue);
 		gbkRejQuaCut_m->SetMarkerStyle(26);
 		gbkRejQuaCut_m->Draw("PL");
-		c4->SaveAs("plots0p6/EffQuaCut.pdf");
+		//c4->SaveAs("plots0p6/EffQuaCut."+plot_format);
 
 		TGraph *gSignificanceQuaCut = new TGraph(3, quaCut, significanceQuaCut);
 		gSignificanceQuaCut->Draw("APL");
@@ -794,6 +801,6 @@ void readTree2018::Loop()
 		gSignificanceQuaCut_m->Draw("PL");
 		gSignificanceQuaCut_m->GetXaxis()->SetRangeUser(0,3);
 		gSignificanceQuaCut_m->GetXaxis()->SetNdivisions(3);
-		c4->SaveAs("plots0p6/significanceQuaCut.pdf");
+		//c4->SaveAs("plots0p6/significanceQuaCut."+plot_format);
 
 	}
