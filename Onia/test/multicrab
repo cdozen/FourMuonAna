@@ -105,14 +105,15 @@ def main():
 			#'/MuOnia/zhenhu-BPHSkim-v4-Run2017F-17Nov2017-v1-e879d2d0c2055d91eebcd00adc2f9d0c/USER',
 			#'/MuOnia/zhenhu-BPHSkim-v2-Run2018D-PromptReco-v2-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018A-PromptReco-v1-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
-                        #'/MuOnia/zhenhu-BPHSkim-v1-Run2018A-PromptReco-v2-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
+                        '/MuOnia/zhenhu-BPHSkim-v1-Run2018A-PromptReco-v2-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018A-PromptReco-v3-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018B-PromptReco-v1-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018B-PromptReco-v2-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018C-PromptReco-v1-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018C-PromptReco-v2-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
                         #'/MuOnia/zhenhu-BPHSkim-v1-Run2018C-PromptReco-v3-1aea5e8b12bfb6b0c50e85cd81af29a5/USER',
-			'/MuOnia/huwang-BPHSkim-2018A_Rereco-Run2018A-17Sep2018-v1-ffb8c9d12c6ffb46bc0610fdbca9e668/USER'
+			#'/MuOnia/huwang-BPHSkim-2018A_Rereco-Run2018A-17Sep2018-v1-ffb8c9d12c6ffb46bc0610fdbca9e668/USER',
+			#'/MuOnia/huwang-BPHSkim-2018B_Rereco-Run2018B-17Sep2018-v1-ffb8c9d12c6ffb46bc0610fdbca9e668/USER'
                        ]
 
         for inDS in inputDatasets:

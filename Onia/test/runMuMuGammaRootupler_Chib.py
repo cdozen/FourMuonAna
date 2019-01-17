@@ -20,7 +20,7 @@ process.source = cms.Source("PoolSource",
 #'file:/eos/uscms/store/user/lpcmuon/fourmuonMC/H0ToUps1SMuMu_m18p5_TuneCUEP8M1_13TeV-pythia8/BPHSkim-v10/180308_232212/0000/BPHSkim_1.root',
 #'file:/eos/uscms/store/user/l1upgrades/Run2017/fourmuon/MuOnia/BPHSkim-v4-Run2017B-17Nov2017-v1/180314_061950/0000/BPHSkim_12.root'
 #'file:/uscms_data/d3/huiwang/CMSSW_10_2_1/src/HeavyFlavorAnalysis/Onia2MuMu/test/BPHSkim_2018A_Rereco.root'		#A sample for 2018 Rereco
-'file:/eos/uscms/store/user/huiwang/MuOnia/BPHSkim-2018A_Rereco-Run2018A-17Sep2018-v1/181226_203327/0000/BPHSkim_590.root'		#A sample for 2018 Rereco
+'file:/eos/uscms/store/user/lpcbphy/hui/MuOnia/BPHSkim-2018A_Rereco-Run2018A-17Sep2018-v1/181226_203327/0000/BPHSkim_590.root'		#A sample for 2018 Rereco
 	 )
 )
 
