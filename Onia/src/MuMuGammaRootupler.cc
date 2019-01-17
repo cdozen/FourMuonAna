@@ -79,6 +79,7 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		const  reco::Candidate* GetAncestor(const reco::Candidate *);
 		int   tightMuon(edm::View<pat::Muon>::const_iterator rmu, reco::Vertex vertex);
 		int   mediumMuon(edm::View<pat::Muon>::const_iterator rmu);
+		void fillUpsilonVector(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
 		void fillUpsilonBestVertex(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
 		void fillUpsilonBestMass(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
 		void fourMuonFit(pat::CompositeCandidate dimuonCand, edm::Handle< edm::View<pat::Muon> > muons, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs, reco::Vertex thePrimaryV);
@@ -128,6 +129,29 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		Float_t pv_x;
 		Float_t pv_y;
 		Float_t pv_z;
+
+		std::vector<Int_t> v_mu1Charge;
+		std::vector<Int_t> v_mu2Charge;
+		std::vector<Float_t> v_mu1_d0;
+		std::vector<Float_t> v_mu2_d0;
+		std::vector<Float_t> v_mu1_d0err;
+		std::vector<Float_t> v_mu2_d0err;
+		std::vector<Float_t> v_mu1_dz;
+		std::vector<Float_t> v_mu2_dz;
+		std::vector<Float_t> v_mu1_dzerr;
+		std::vector<Float_t> v_mu2_dzerr;
+		std::vector<Float_t> v_mu1_vz;
+		std::vector<Float_t> v_mu2_vz;
+		std::vector<Float_t> v_mumufit_Mass;
+		std::vector<Float_t> v_mumufit_MassErr;
+		std::vector<Float_t> v_mumufit_VtxCL;
+		std::vector<Float_t> v_mumufit_VtxCL2;
+		std::vector<Float_t> v_mumufit_DecayVtxX;
+		std::vector<Float_t> v_mumufit_DecayVtxY;
+		std::vector<Float_t> v_mumufit_DecayVtxZ;
+		std::vector<Float_t> v_mumufit_DecayVtxXE;
+		std::vector<Float_t> v_mumufit_DecayVtxYE;
+		std::vector<Float_t> v_mumufit_DecayVtxZE;
 
 		TLorentzVector dimuon_p4;
 		TLorentzVector mu1_p4;
@@ -435,6 +459,30 @@ MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
 		onia_tree->Branch("pv_x",     &pv_x,     "pv_x/F");
 		onia_tree->Branch("pv_y",     &pv_y,     "pv_y/F");
 		onia_tree->Branch("pv_z",     &pv_z,     "pv_z/F");
+
+		onia_tree->Branch("v_mu1Charge",   &v_mu1Charge);
+		onia_tree->Branch("v_mu2Charge",   &v_mu2Charge);
+		onia_tree->Branch("v_mu1_d0",   &v_mu1_d0);
+		onia_tree->Branch("v_mu1_d0err",   &v_mu1_d0err);
+		onia_tree->Branch("v_mu2_d0",   &v_mu2_d0);
+		onia_tree->Branch("v_mu2_d0err",   &v_mu2_d0err);
+		onia_tree->Branch("v_mu1_dz",   &v_mu1_dz);
+		onia_tree->Branch("v_mu1_dzerr",   &v_mu1_dzerr);
+		onia_tree->Branch("v_mu2_dz",   &v_mu2_dz);
+		onia_tree->Branch("v_mu2_dzerr",   &v_mu2_dzerr);
+		onia_tree->Branch("v_mu1_vz",   &v_mu1_vz);
+		onia_tree->Branch("v_mu2_vz",   &v_mu2_vz);
+		onia_tree->Branch("v_mumufit_Mass",&v_mumufit_Mass);
+		onia_tree->Branch("v_mumufit_MassErr",&v_mumufit_MassErr);
+		onia_tree->Branch("v_mumufit_VtxCL",&v_mumufit_VtxCL);
+		onia_tree->Branch("v_mumufit_VtxCL2",&v_mumufit_VtxCL2);
+		onia_tree->Branch("v_mumufit_DecayVtxX",&v_mumufit_DecayVtxX);
+		onia_tree->Branch("v_mumufit_DecayVtxY",&v_mumufit_DecayVtxY);
+		onia_tree->Branch("v_mumufit_DecayVtxZ",&v_mumufit_DecayVtxZ);
+		onia_tree->Branch("v_mumufit_DecayVtxXE",&v_mumufit_DecayVtxXE);
+		onia_tree->Branch("v_mumufit_DecayVtxYE",&v_mumufit_DecayVtxYE);
+		onia_tree->Branch("v_mumufit_DecayVtxZE",&v_mumufit_DecayVtxZE);
+
 
 		onia_tree->Branch("mu1_p4",  "TLorentzVector", &mu1_p4);
 		onia_tree->Branch("mu2_p4",  "TLorentzVector", &mu2_p4);
@@ -769,7 +817,7 @@ UInt_t MuMuGammaRootupler::getTriggerBits(const edm::Event& iEvent ) {
 			//ss0<<"HLT_Dimuon16_Jpsi_v"<<version;
 			bits_0.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss0.str()).label().c_str()));
 
-			ss1<<"HLT_DiMuon0_Upsilon_Muon_v"<<version;
+			ss1<<"HLT_Dimuon0_Upsilon_Muon_v"<<version;
 			//ss1<<"HLT_Dimuon13_PsiPrime_v"<<version;
 			bits_1.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss1.str()).label().c_str()));
 
@@ -951,32 +999,56 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	mother_pdgId = 0;
 	irank = 0;
 
+	v_mu1Charge.clear();
+	v_mu2Charge.clear();
+	v_mu1_d0.clear();
+	v_mu1_d0err.clear();
+	v_mu2_d0.clear();
+	v_mu2_d0err.clear();
+	v_mu1_dz.clear();
+	v_mu1_dzerr.clear();
+	v_mu2_dz.clear();
+	v_mu2_dzerr.clear();
+	v_mu1_vz.clear();
+	v_mu2_vz.clear();
+	v_mumufit_Mass.clear();
+	v_mumufit_MassErr.clear();
+	v_mumufit_VtxCL.clear();
+	v_mumufit_VtxCL2.clear();
+	v_mumufit_DecayVtxX.clear();
+	v_mumufit_DecayVtxY.clear();
+	v_mumufit_DecayVtxZ.clear();
+	v_mumufit_DecayVtxXE.clear();
+	v_mumufit_DecayVtxYE.clear();
+	v_mumufit_DecayVtxZE.clear();
+
 	dimuon_p4.SetPtEtaPhiM(0,0,0,0);
 	mu1_p4.SetPtEtaPhiM(0,0,0,0);
 	mu2_p4.SetPtEtaPhiM(0,0,0,0);
-	mu1Charge = -10;
-	mu2Charge = -10;
-	mu1_d0 = -10;
-	mu1_d0err = -10;
-	mu2_d0 = -10;
-	mu2_d0err = -10;
+	mu1Charge = -10; 
+	mu2Charge = -10; 
+	mu1_d0 = -10; 
+	mu1_d0err = -10; 
+	mu2_d0 = -10; 
+	mu2_d0err = -10; 
 	mu1_dz = -1000;
 	mu1_dzerr = -1000;
 	mu2_dz = -1000;
 	mu2_dzerr = -1000;
 	mu1_vz = -1000;
 	mu2_vz = -1000;
-	mumufit_Mass = -10;
-	mumufit_MassErr = -10;
-	mumufit_VtxCL = -10;
-	mumufit_VtxCL2 = -10;
-	mumufit_DecayVtxX = -10;
-	mumufit_DecayVtxY = -10;
-	mumufit_DecayVtxZ = -10;
-	mumufit_DecayVtxXE = -10;
-	mumufit_DecayVtxYE = -10;
-	mumufit_DecayVtxZE = -10;
+	mumufit_Mass = -10; 
+	mumufit_MassErr = -10; 
+	mumufit_VtxCL = -10; 
+	mumufit_VtxCL2 = -10; 
+	mumufit_DecayVtxX = -10; 
+	mumufit_DecayVtxY = -10; 
+	mumufit_DecayVtxZ = -10; 
+	mumufit_DecayVtxXE = -10; 
+	mumufit_DecayVtxYE = -10; 
+	mumufit_DecayVtxZE = -10; 
 	mumufit_p4.SetPtEtaPhiM(0,0,0,0);
+
 
 	fourMuFit_Mass_allComb_mix.clear();
 	fourMuFit_Mass_mix = -1;
@@ -1334,8 +1406,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	float bestYMass = 1000;
 	pat::CompositeCandidate DimuonCand_bestYMass;
 	if ( ! OnlyGen_ 
-			&& dimuons.isValid() && dimuons->size() > 0
-			&& muons.isValid() && muons->size()>4) {
+			&& dimuons.isValid() && dimuons->size() > 0) {
 		for(pat::CompositeCandidateCollection::const_iterator dimuonCand=dimuons->begin();dimuonCand!= dimuons->end(); ++dimuonCand)
 		{
 			if (dimuonCand->mass() < OniaMassMin_ || dimuonCand->mass() > OniaMassMax_) continue;
@@ -1391,6 +1462,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 			nGoodUpsilonCand++;
 			pat::CompositeCandidate thisDimuonCand = *dimuonCand;
 
+			fillUpsilonVector(mumuVertexFitTree,thisDimuonCand,bFieldHandle,bs);
 			if (nGoodUpsilonCand==1) fillUpsilonBestVertex(mumuVertexFitTree,thisDimuonCand,bFieldHandle,bs);
 			if (best4muonCand_ == false || (best4muonCand_ == true && nGoodUpsilonCand==1)) {
 				/*		//4 muon mix
@@ -1418,6 +1490,61 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 
 	if (nGoodUpsilonCand>0) onia_tree->Fill();
 
+}
+
+void  MuMuGammaRootupler::fillUpsilonVector(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs) {
+	mumuVertexFitTree->movePointerToTheTop();     
+	RefCountedKinematicParticle mumu_vFit_noMC = mumuVertexFitTree->currentParticle();    
+	RefCountedKinematicVertex mumu_vFit_vertex_noMC = mumuVertexFitTree->currentDecayVertex(); //fitted vertex is same as the commonVertex in the Onia2MuMu skim
+	//KinematicParameters mymumupara=  mumu_vFit_noMC->currentState().kinematicParameters();
+	//cout<<"mymumupara px="<<mymumupara.momentum().x()<<",py="<<mymumupara.momentum().y()<<", m="<<mumu_vFit_noMC->currentState().mass()<<endl;      
+	//float mymumuonlyctau=GetcTau(mumu_vFit_vertex_noMC,mumu_vFit_noMC,thePrimaryV,beamSpot);
+	//float mymumuonlyctauerr=GetcTauErr(mumu_vFit_vertex_noMC,mumu_vFit_noMC,thePrimaryV,beamSpot);     
+	//cout<<"mymumuonlyctau="<<mymumuonlyctau<<endl;
+	//v_mumufit_Ctau->push_back( mymumuonlyctau );
+	//v_mumufit_Ctauerr->push_back( mymumuonlyctauerr );
+	v_mumufit_Mass.push_back( mumu_vFit_noMC->currentState().mass());
+	v_mumufit_MassErr.push_back( sqrt( mumu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6) ) ) ; 
+	v_mumufit_VtxCL.push_back( ChiSquaredProbability((double)(mumu_vFit_vertex_noMC->chiSquared()),(double)(mumu_vFit_vertex_noMC->degreesOfFreedom())) );
+	v_mumufit_VtxCL2.push_back( mumu_vFit_vertex_noMC->chiSquared() );
+	v_mumufit_DecayVtxX.push_back( mumu_vFit_vertex_noMC->position().x() );
+	v_mumufit_DecayVtxY.push_back( mumu_vFit_vertex_noMC->position().y() );
+	v_mumufit_DecayVtxZ.push_back( mumu_vFit_vertex_noMC->position().z() );
+	v_mumufit_DecayVtxXE.push_back( mumu_vFit_vertex_noMC->error().cxx() );
+	v_mumufit_DecayVtxYE.push_back( mumu_vFit_vertex_noMC->error().cyy() );
+	v_mumufit_DecayVtxZE.push_back( mumu_vFit_vertex_noMC->error().czz() );
+	//v_mumufit_p4.SetXYZM( mumu_vFit_noMC->currentState().globalMomentum().x(), mumu_vFit_noMC->currentState().globalMomentum().y(), mumu_vFit_noMC->currentState().globalMomentum().z(), mumufit_Mass ); 
+	//v_mumufit_mupIdx->push_back( std::distance(thePATMuonHandle->begin(), iMuon1));
+	//v_mumufit_mumIdx->push_back( std::distance(thePATMuonHandle->begin(), iMuon2));
+	//std::cout<<"mass0="<<dimuonCand->mass()<<", mass1="<<v_mumufit_Mass<<std::endl;
+	//std::cout<<"vProb0="<<vProb<<", vProb1="<<v_mumufit_VtxCL<<std::endl;
+
+	//raw dimuon and muon
+	//dimuon_p4.SetPtEtaPhiM(dimuonCand.pt(), dimuonCand.eta(), dimuonCand.phi(), dimuonCand.mass());
+	//reco::Candidate::LorentzVector vP = dimuonCand.daughter("muon1")->p4();
+	//reco::Candidate::LorentzVector vM = dimuonCand.daughter("muon2")->p4();
+	//std::cout<<"muon charge"<<dimuonCand->daughter("muon1")->charge()<<" "<<dimuonCand->daughter("muon2")->charge()<<std::endl;
+	//if ( dimuonCand->daughter("muon1")->charge() < 0) {
+	// vP = dimuonCand->daughter("muon2")->p4();
+	// vM = dimuonCand->daughter("muon1")->p4();
+	//}  
+	//mu1_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
+	//mu2_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
+	v_mu1Charge.push_back( dimuonCand.daughter("muon1")->charge() );
+	v_mu2Charge.push_back( dimuonCand.daughter("muon2")->charge() );
+
+	reco::TrackRef muTrack1_ref = ( dynamic_cast<const pat::Muon*>(dimuonCand.daughter("muon1") ) )->innerTrack();
+	reco::TrackRef muTrack2_ref = ( dynamic_cast<const pat::Muon*>(dimuonCand.daughter("muon2") ) )->innerTrack();
+	reco::TrackTransientTrack muon1TTT(muTrack1_ref, &(*bFieldHandle));
+	reco::TrackTransientTrack muon2TTT(muTrack2_ref, &(*bFieldHandle));
+	v_mu1_d0.push_back( -muon1TTT.dxy(bs));
+	v_mu1_d0err.push_back( muon1TTT.d0Error());
+	v_mu1_dz.push_back( muon1TTT.dz());
+	v_mu1_dzerr.push_back( muon1TTT.dzError());
+	v_mu2_d0.push_back( -muon2TTT.dxy(bs));
+	v_mu2_d0err.push_back( muon2TTT.d0Error());
+	v_mu2_dz.push_back( muon2TTT.dz());
+	v_mu2_dzerr.push_back( muon2TTT.dzError());
 }
 
 
