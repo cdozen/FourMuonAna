@@ -1,6 +1,7 @@
 #define readTree2018_cxx
 #include "readTree2018.h"
 #include <TH2.h>
+#include <TLegend.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
@@ -11,7 +12,10 @@
 
 void readTree2018::Loop()
 {
+	const bool blind_signal = true;
 	TString plot_format = "png";
+	gStyle->SetOptStat(kFALSE);
+
 	if (fChain == 0) return;
 
 	std::vector<TLorentzVector> mu1_p4_vector;
@@ -481,18 +485,43 @@ void readTree2018::Loop()
 		//after cuts, compare original vs mixPhysPkg
 		hfourMuMass_aftercut->SetMarkerStyle(20);
 		hfourMuMass_aftercut->SetMarkerColor(kBlack);
+		hfourMuMass_aftercut->SetLineColor(kBlack);
 		hfourMuMass_aftercut->Draw("e1");
 		std::cout << "hfourMuMass_aftercut->Integral() = " << hfourMuMass_aftercut->Integral() << std::endl;
 		hfourMuMass_physkbg_mix->Scale(hfourMuMass_aftercut->Integral()/hfourMuMass_physkbg_mix->Integral());
 		hfourMuMass_physkbg_mix->Draw("e1same");
 		std::cout << "hfourMuMass_physkbg_mix->Integral() = " << hfourMuMass_physkbg_mix->Integral() << std::endl;
+		TString total_data = "data (" + std::to_string((int)hfourMuMass_aftercut->Integral()) + " total)";
+		TLegend* leg = new TLegend(0.7,0.7,0.9,0.9);
+		leg->AddEntry(hfourMuMass_aftercut,total_data,"lep");
+		leg->AddEntry(hfourMuMass_physkbg_mix,"mixed BG","lep");
+		leg->Draw("same");
 		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg."+plot_format);
+
+		TFile* out_file = new TFile("plots0p6/fourMuMass.root","RECREATE");
+		hfourMuMass_aftercut->Write();
+		hfourMuMass_physkbg_mix->Write();
+		out_file->Close();
+
 		hfourMuMass_aftercut_smallrange->SetMarkerStyle(20);
 		hfourMuMass_aftercut_smallrange->SetMarkerColor(kBlack);
-		hfourMuMass_aftercut_smallrange->Draw("e1");
+		//hfourMuMass_aftercut_smallrange->Draw("e1");
+		TH1F *hfourMuMass_aftercut_smallrange_copy = (TH1F*)hfourMuMass_aftercut_smallrange->Clone();
+
+		if(blind_signal)
+		{
+			for(int i=1; i <= hfourMuMass_aftercut_smallrange_copy->GetSize()-2; i++)
+			{
+				if(i>= hfourMuMass_aftercut_smallrange_copy->FindBin(17.5) && i<= hfourMuMass_aftercut_smallrange_copy->FindBin(19.5))
+				hfourMuMass_aftercut_smallrange_copy->SetBinContent(i,0);
+			}
+		}
+		hfourMuMass_aftercut_smallrange_copy->Draw("e1");
+
 		hfourMuMass_physkbg_mix_smallrange->Scale(scaleEntries/hfourMuMass_physkbg_mix_smallrange->Integral());
 		//hfourMuMass_physkbg_mix_smallrange->Scale(scaleEntries*5/2/hfourMuMass_physkbg_mix_smallrange->Integral());  //scale for different binning
 		hfourMuMass_physkbg_mix_smallrange->Draw("e1same");
+		leg->Draw("same");
 		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg_smallrange."+plot_format);
 
 		//after cuts, compare original vs mixPhysPkg
