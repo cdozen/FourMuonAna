@@ -91,6 +91,7 @@ public :
    Float_t         fourMuFit_VtxProb_mix3evts;
    TLorentzVector  *fourMuFit_p4_mix3evts;
    vector<float>   *fourMuFit_Mass_allComb;
+   vector<float>   *v_mumufit_Mass;
    vector<float>   *fourMuFit_Mass;
    vector<float>   *fourMuFit_MassErr;
    vector<float>   *fourMuFit_Pt;
@@ -300,6 +301,7 @@ public :
    TBranch        *b_fourMuFit_VtxProb_mix3evts;   //!
    TBranch        *b_fourMuFit_p4_mix3evts;   //!
    TBranch        *b_fourMuFit_Mass_allComb;   //!
+   TBranch        *b_v_mumufit_Mass;   //!
    TBranch        *b_fourMuFit_Mass;   //!
    TBranch        *b_fourMuFit_MassErr;   //!
    TBranch        *b_fourMuFit_Pt;   //!
@@ -522,6 +524,7 @@ void readTree2018::Init(TTree *tree)
    mu4_p4_mix = 0;
    fourMuFit_p4_mix3evts = 0;
    fourMuFit_Mass_allComb = 0;
+   v_mumufit_Mass = 0;
    fourMuFit_Mass = 0;
    fourMuFit_MassErr = 0;
    fourMuFit_Pt = 0;
@@ -671,6 +674,7 @@ void readTree2018::Init(TTree *tree)
    fChain->SetBranchAddress("fourMuFit_VtxProb_mix3evts", &fourMuFit_VtxProb_mix3evts, &b_fourMuFit_VtxProb_mix3evts);
    fChain->SetBranchAddress("fourMuFit_p4_mix3evts", &fourMuFit_p4_mix3evts, &b_fourMuFit_p4_mix3evts);
    fChain->SetBranchAddress("fourMuFit_Mass_allComb", &fourMuFit_Mass_allComb, &b_fourMuFit_Mass_allComb);
+   fChain->SetBranchAddress("v_mumufit_Mass", &v_mumufit_Mass, &b_v_mumufit_Mass);
    fChain->SetBranchAddress("fourMuFit_Mass", &fourMuFit_Mass, &b_fourMuFit_Mass);
    fChain->SetBranchAddress("fourMuFit_MassErr", &fourMuFit_MassErr, &b_fourMuFit_MassErr);
    fChain->SetBranchAddress("fourMuFit_Pt", &fourMuFit_Pt, &b_fourMuFit_Pt);
