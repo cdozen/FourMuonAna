@@ -119,6 +119,7 @@ void readTree2018::Loop()
 	hfourMuMass_mix_midLumi_smallrange->GetXaxis()->SetTitle("4 muon mass [GeV]");
 
 
+	TH1F *h_number_of_Y = new TH1F("h_number_of_Y","h_number_of_Y",10,0,10);
 	TH1F *hfourMuMass = new TH1F("hfourMuMass","hfourMuMass",100,0,100);
 	hfourMuMass->GetXaxis()->SetTitle("4 muon mass [GeV]");
 	hfourMuMass->GetYaxis()->SetTitle("Candidates / GeV");
@@ -258,6 +259,9 @@ void readTree2018::Loop()
 		if ((trigger&256)==0) continue;			//HLT_Trimuon5_3p5_2_Upsilon_Muon
 		//if ((trigger&512)==0) continue;		//HLT_TrimuonOpen_5_3p5_2_Upsilon_Muon
 
+		//std::cout << "v_mumufit_Mass->size() = " << v_mumufit_Mass->size() << std::endl;
+		//std::cout << "fourMuFit_Mass->size() = " << fourMuFit_Mass->size() << std::endl;
+		h_number_of_Y->Fill(v_mumufit_Mass->size());
 
 		//orignial events in the MuOnia dataset
 		int nCand = 0;
@@ -498,15 +502,10 @@ void readTree2018::Loop()
 		leg->Draw("same");
 		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg."+plot_format);
 
-		TFile* out_file = new TFile("plots0p6/fourMuMass.root","RECREATE");
-		hfourMuMass_aftercut->Write();
-		hfourMuMass_physkbg_mix->Write();
-		out_file->Close();
-
 		hfourMuMass_aftercut_smallrange->SetMarkerStyle(20);
 		hfourMuMass_aftercut_smallrange->SetMarkerColor(kBlack);
 		//hfourMuMass_aftercut_smallrange->Draw("e1");
-		TH1F *hfourMuMass_aftercut_smallrange_copy = (TH1F*)hfourMuMass_aftercut_smallrange->Clone();
+		TH1F *hfourMuMass_aftercut_smallrange_copy = (TH1F*)hfourMuMass_aftercut_smallrange->Clone("hfourMuMass_aftercut_smallrange_copy");
 
 		if(blind_signal)
 		{
@@ -523,6 +522,14 @@ void readTree2018::Loop()
 		hfourMuMass_physkbg_mix_smallrange->Draw("e1same");
 		leg->Draw("same");
 		c1->SaveAs("plots0p6/hfourMuMass_afterCut_origVSphyskbg_smallrange."+plot_format);
+
+		TFile* out_file = new TFile("plots0p6/fourMuMass.root","RECREATE");
+		hfourMuMass_aftercut->Write();
+		hfourMuMass_physkbg_mix->Write();
+		hfourMuMass_aftercut_smallrange->Write();
+		hfourMuMass_aftercut_smallrange_copy->Write();
+		hfourMuMass_physkbg_mix_smallrange->Write();
+		out_file->Close();
 
 		//after cuts, compare original vs mixPhysPkg
 		hfourMuMass_aftercut->Draw("e1");
@@ -554,6 +561,9 @@ void readTree2018::Loop()
 		//c9->SaveAs("plots0p6/Ymumu2D_physkbg_mix."+plot_format);
 		Ymumu2DBoost_physkbg_mix->Draw("colz");
 		//c9->SaveAs("plots0p6/Ymumu2DBoost_physkbg_mix."+plot_format);
+		h_number_of_Y->Draw("e1");
+		c9->SetLogy();
+		c9->SaveAs("plots0p6/number_of_Y."+plot_format);
 
 		TCanvas *c10 = new TCanvas("c10","c10");
 		//Ypt1->Scale(1./Ypt1->Integral());
