@@ -120,6 +120,7 @@ void readTree2018::Loop()
 
 
 	TH1F *h_number_of_Y = new TH1F("h_number_of_Y","h_number_of_Y",10,0,10);
+	TH1F *h_fourMu_pt_order = new TH1F("h_fourMu_pt_order","h_fourMu_pt_order",6,0,6);
 	TH1F *hfourMuMass = new TH1F("hfourMuMass","hfourMuMass",100,0,100);
 	hfourMuMass->GetXaxis()->SetTitle("4 muon mass [GeV]");
 	hfourMuMass->GetYaxis()->SetTitle("Candidates / GeV");
@@ -300,14 +301,20 @@ void readTree2018::Loop()
 
 			nCand++;
 
+			//std::array<float, 4> s = {fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i), fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)};
+			//std::sort(s.begin(), s.end());		//sort from small to big
+			//bool pass_trigger_pt = s.at(1) > 2 && s.at(2) > 3.5 && s.at(3) > 5;
+			//if(pass_trigger_pt == false) std::cout << "mu1Pt = " << fourMuFit_mu1Pt->at(i)  << "mu2Pt = " << fourMuFit_mu2Pt->at(i)  << "mu3Pt = " << fourMuFit_mu3Pt->at(i)  << "mu4Pt = " << fourMuFit_mu4Pt->at(i) << std::endl;
+
 			if (fourMuFit_Mass->at(i)>13 && fourMuFit_Mass->at(i)<23) nVertices_fourmuon->Fill(numPrimaryVertices);
 
 			if (
 					fourMuFit_VtxProb->at(i)>0.05
 					&& (mu3_Medium->at(i) + mu4_Medium->at(i)) >= 2
-					&& fourMuFit_mu1Pt->at(i) >= muonPtCut[2] && fourMuFit_mu2Pt->at(i) >= muonPtCut[2] && fourMuFit_mu3Pt->at(i) >= muonPtCut[2] && fourMuFit_mu4Pt->at(i) >= muonPtCut[2]
 					&& mu34.M()< 9.2
-					// && fourMuFit_Mass->at(i)>13 && fourMuFit_Mass->at(i)<26
+					&& fourMuFit_mu1Pt->at(i) >= muonPtCut[2] && fourMuFit_mu2Pt->at(i) >= muonPtCut[2] && fourMuFit_mu3Pt->at(i) >= muonPtCut[2] && fourMuFit_mu4Pt->at(i) >= muonPtCut[2]
+					//&& pass_trigger_pt
+					//&& fourMuFit_Mass->at(i)>13 && fourMuFit_Mass->at(i)<26
 				) {
 				mu12mass->Fill(mu12.M());
 				/*if (fabs(mumufit_Mass-9.4603) > (3*1.105*mumufit_MassErr)) {
@@ -338,6 +345,29 @@ void readTree2018::Loop()
 				Y2Dpteta->Fill(mu12.Eta(),mu12.Pt());
 				Y2Dptphi->Fill(mu12.Phi(),mu12.Pt()); 
 				Y2Detaphi->Fill(mu12.Eta(),mu12.Phi()); 	
+
+				bool fourMu_pt_fill = false;
+
+				if (std::min(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)) > std::max(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)))
+				{h_fourMu_pt_order->Fill(0); fourMu_pt_fill = true;}		//yymm
+				if (std::max(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)) > std::max(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i))
+				&& std::max(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)) > std::min(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i))
+				&& std::min(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)) > std::min(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)))
+				{h_fourMu_pt_order->Fill(1); fourMu_pt_fill = true;}		//ymym
+				if (std::max(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)) > std::max(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i))
+				&& std::min(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)) > std::min(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)))
+				{h_fourMu_pt_order->Fill(2); fourMu_pt_fill = true;}		//ymmy
+				if (std::max(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)) > std::max(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i))
+				&& std::min(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)) > std::min(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)))
+				{h_fourMu_pt_order->Fill(3); fourMu_pt_fill = true;}		//myym
+				if (std::max(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)) > std::max(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i))
+				&& std::max(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)) > std::min(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i))
+				&& std::min(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)) > std::min(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)))
+				{h_fourMu_pt_order->Fill(4); fourMu_pt_fill = true;}		//mymy
+				if (std::min(fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)) > std::max(fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i)))
+				{h_fourMu_pt_order->Fill(5); fourMu_pt_fill = true;}		//mmyy
+
+				if(fourMu_pt_fill == false) std::cout << "mu1Pt = " << fourMuFit_mu1Pt->at(i)  << "mu2Pt = " << fourMuFit_mu2Pt->at(i)  << "mu3Pt = " << fourMuFit_mu3Pt->at(i)  << "mu4Pt = " << fourMuFit_mu4Pt->at(i) << std::endl;
 
 				nCand_aftercut++;
 
@@ -387,7 +417,7 @@ void readTree2018::Loop()
 			//for (unsigned k=j; k<j+1000 && k<mu12_p4_vector.size();k++){
 			if (j==k) continue;
 			//if ( fabs(mu12boost_p4_vector[k].Vect().DeltaR( mu12boost_p4_vector[j].Vect())) > 1.5) continue;
-			if ( fabs(mu12_p4_vector[k].Vect().DeltaR( mu12_p4_vector[j].Vect())) > 0.3) continue;
+			if ( fabs(mu12_p4_vector[k].Vect().DeltaR( mu12_p4_vector[j].Vect())) > 0.05) continue;
 			//if ( fabs(mu12_p4_vector[k].Phi() - mu12_p4_vector[j].Phi()) < 0.1) continue;
 			//if ( fabs(mu12_p4_vector[k].Eta() - mu12_p4_vector[j].Eta()) > 0.05 ) continue;
 			//if ( fabs(mu12_p4_vector[k].Phi() - mu12_p4_vector[j].Phi()) > 0.5 ) continue;
@@ -396,6 +426,12 @@ void readTree2018::Loop()
 			//if ( mu12_p4_vector[k].Eta() * mu12_p4_vector[j].Eta() < 0 ) continue;
 			//if (fabs( mu34_p4_vector[k].M()-mu34_p4_vector[j].M() )>0.5*mu34_p4_vector[k] ) continue;
 			//if ( mu34.M() > 9.) continue;
+
+			//std::array<double, 4> s = {mu1_p4_vector[k].Pt(), mu2_p4_vector[k].Pt(), mu3_p4_vector[j].Pt(), mu4_p4_vector[j].Pt()};
+			//std::sort(s.begin(), s.end());		//sort from small to big
+			//bool pass_trigger_pt = s.at(1) > 2 && s.at(2) > 3.5 && s.at(3) > 5;
+			//if(pass_trigger_pt == false) continue;
+
 			TLorentzVector mixFourMu;
 			mixFourMu=mu12_p4_vector[k]+mu34_p4_vector[j];
 			//std::cout<<mixFourMu.Pt()<<" "<<mixFourMu.Pz()<<" "<<mixFourMu.M()<<std::endl;
@@ -491,6 +527,8 @@ void readTree2018::Loop()
 		hfourMuMass_aftercut->SetMarkerColor(kBlack);
 		hfourMuMass_aftercut->SetLineColor(kBlack);
 		hfourMuMass_aftercut->Draw("e1");
+		std::cout << "hnCand_aftercut->Integral() = " << hnCand_aftercut->Integral() << std::endl;
+		std::cout << "h_fourMu_pt_order->Integral() = " << h_fourMu_pt_order->Integral() << std::endl;
 		std::cout << "hfourMuMass_aftercut->Integral() = " << hfourMuMass_aftercut->Integral() << std::endl;
 		hfourMuMass_physkbg_mix->Scale(hfourMuMass_aftercut->Integral()/hfourMuMass_physkbg_mix->Integral());
 		hfourMuMass_physkbg_mix->Draw("e1same");
@@ -605,15 +643,18 @@ void readTree2018::Loop()
 		mu34massBkgH->SetMarkerColor(kBlue);
 		mu34massBkgH->Draw("e1same");
 		//c10->SaveAs("plots0p6/mu34massOverlay."+plot_format);
-
+		h_fourMu_pt_order->Draw("e1");
+		h_fourMu_pt_order->SetMinimum(0);
+		c10->SaveAs("plots0p6/ourMu_pt_order."+plot_format);
+		
 
 		TCanvas *c8 = new TCanvas("c8","c8");
 		hnCand_aftercut->SetMarkerColor(kRed);
 		hnCand_aftercut->Draw("e1");
-		hnCand->Scale((float)hnCand_aftercut->Integral()/hnCand->Integral());
-		hnCand->SetMarkerSize(0.7);
-		hnCand->Draw("same");
-		//c8->SaveAs("plots0p6/nCand."+plot_format);
+		//hnCand->Scale((float)hnCand_aftercut->Integral()/hnCand->Integral());
+		//hnCand->SetMarkerSize(0.7);
+		//hnCand->Draw("same");
+		c8->SaveAs("plots0p6/nCand."+plot_format);
 		shnCand_aftercut->SetMarkerColor(kRed);
 		shnCand_aftercut->Draw("e1");
 		shnCand->Scale((float)shnCand_aftercut->Integral()/shnCand->Integral());
