@@ -11,8 +11,8 @@ git clone https://github.com/zhenhu/FourMuonAna.git
 #####
 scram b -j28
 
-####
-CMSSW for 2018:CMSSW_10_2_X
+####*******
+CMSSW for 2018:  CMSSW_10_2_X
 ###
 cmsrel CMSSW_10_2_5
 #####
