@@ -79,6 +79,7 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		const  reco::Candidate* GetAncestor(const reco::Candidate *);
 		int   tightMuon(edm::View<pat::Muon>::const_iterator rmu, reco::Vertex vertex);
 		int   mediumMuon(edm::View<pat::Muon>::const_iterator rmu);
+		int   looseMuon(edm::View<pat::Muon>::const_iterator rmu);
 		void fillUpsilonVector(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
 		void fillUpsilonBestVertex(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
 		void fillUpsilonBestMass(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
@@ -282,6 +283,10 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		std::vector<Int_t> mu2_Medium;
 		std::vector<Int_t> mu3_Medium;
 		std::vector<Int_t> mu4_Medium;
+		std::vector<Int_t> mu1_Loose;
+		std::vector<Int_t> mu2_Loose;
+		std::vector<Int_t> mu3_Loose;
+		std::vector<Int_t> mu4_Loose;
 		std::vector<Int_t> mu1_pdgID;
 		std::vector<Int_t> mu2_pdgID;
 		std::vector<Int_t> mu3_pdgID;
@@ -613,6 +618,10 @@ MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
 		onia_tree->Branch("mu2_Medium",   &mu2_Medium);
 		onia_tree->Branch("mu3_Medium",   &mu3_Medium);
 		onia_tree->Branch("mu4_Medium",   &mu4_Medium);
+		onia_tree->Branch("mu1_Loose",   &mu1_Loose);
+		onia_tree->Branch("mu2_Loose",   &mu2_Loose);
+		onia_tree->Branch("mu3_Loose",   &mu3_Loose);
+		onia_tree->Branch("mu4_Loose",   &mu4_Loose);
 		onia_tree->Branch("mu1_pdgID",   &mu1_pdgID);
 		onia_tree->Branch("mu2_pdgID",   &mu2_pdgID);
 		onia_tree->Branch("mu3_pdgID",   &mu3_pdgID);
@@ -1157,6 +1166,10 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	mu2_Medium.clear();
 	mu3_Medium.clear();
 	mu4_Medium.clear();
+	mu1_Loose.clear();
+	mu2_Loose.clear();
+	mu3_Loose.clear();
+	mu4_Loose.clear();
 	mu1_pdgID.clear();
 	mu2_pdgID.clear();
 	mu3_pdgID.clear();
@@ -1694,6 +1707,14 @@ void MuMuGammaRootupler::fillDescriptions(edm::ConfigurationDescriptions & descr
 	descriptions.addDefault(desc);
 }
 
+int MuMuGammaRootupler::looseMuon(edm::View<pat::Muon>::const_iterator rmu) {                                                        
+	int goodLooseMuon=0;
+
+	if(  muon::isLooseMuon(*rmu))
+	goodLooseMuon = 1;
+   return goodLooseMuon;
+}
+
 int MuMuGammaRootupler::mediumMuon(edm::View<pat::Muon>::const_iterator rmu) {
 	int goodMediumMuon=0;
 
@@ -2071,6 +2092,10 @@ void MuMuGammaRootupler::fourMuonFit(pat::CompositeCandidate dimuonCand, edm::Ha
 						mu2_Medium.push_back(mediumMuon(muons->begin()+dimuonCand.userInt("mu2Index")));
 						mu3_Medium.push_back(mediumMuon(mu3));
 						mu4_Medium.push_back(mediumMuon(mu4));
+						mu1_Loose.push_back(looseMuon(muons->begin()+dimuonCand.userInt("mu1Index")));
+						mu2_Loose.push_back(looseMuon(muons->begin()+dimuonCand.userInt("mu2Index")));
+						mu3_Loose.push_back(looseMuon(mu3));
+						mu4_Loose.push_back(looseMuon(mu4));
 
 						if (isMC_) {
 							reco::GenParticleRef genMu1 = (muons->begin()+dimuonCand.userInt("mu1Index"))->genParticleRef();
