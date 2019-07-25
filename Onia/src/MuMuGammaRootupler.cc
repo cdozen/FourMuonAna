@@ -312,12 +312,7 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		std::vector<Int_t> mu2_Loose;
 		std::vector<Int_t> mu3_Loose;
 		std::vector<Int_t> mu4_Loose;
-<<<<<<< HEAD
-	
-                std::vector<Int_t> mu1_pdgID;
-=======
 		std::vector<Int_t> mu1_pdgID;
->>>>>>> upstream/master
 		std::vector<Int_t> mu2_pdgID;
 		std::vector<Int_t> mu3_pdgID;
 		std::vector<Int_t> mu4_pdgID;
@@ -679,10 +674,6 @@ MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
 		onia_tree->Branch("mu2_Loose",   &mu2_Loose);
 		onia_tree->Branch("mu3_Loose",   &mu3_Loose);
 		onia_tree->Branch("mu4_Loose",   &mu4_Loose);
-<<<<<<< HEAD
-	
-=======
->>>>>>> upstream/master
 		onia_tree->Branch("mu1_pdgID",   &mu1_pdgID);
 		onia_tree->Branch("mu2_pdgID",   &mu2_pdgID);
 		onia_tree->Branch("mu3_pdgID",   &mu3_pdgID);
@@ -1571,10 +1562,6 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	mu2_Loose.clear();
 	mu3_Loose.clear();
 	mu4_Loose.clear();
-<<<<<<< HEAD
-	
-=======
->>>>>>> upstream/master
 	mu1_pdgID.clear();
 	mu2_pdgID.clear();
 	mu3_pdgID.clear();
@@ -2168,16 +2155,6 @@ void MuMuGammaRootupler::fillDescriptions(edm::ConfigurationDescriptions & descr
 	desc.setUnknown();
 	descriptions.addDefault(desc);
 }
-int MuMuGammaRootupler::looseMuon(edm::View<pat::Muon>::const_iterator rmu) {
-	int goodLooseMuon=0;
-
-	if(  muon::isLooseMuon(*rmu)
-	  )  
-        goodLooseMuon = 1;
-
-	return goodLooseMuon;
-}
-
 
 int MuMuGammaRootupler::looseMuon(edm::View<pat::Muon>::const_iterator rmu) {                                                        
 	int goodLooseMuon=0;
@@ -2572,10 +2549,6 @@ void MuMuGammaRootupler::fourMuonFit(pat::CompositeCandidate dimuonCand, edm::Ha
 						mu2_Loose.push_back(looseMuon(muons->begin()+dimuonCand.userInt("mu2Index")));
 						mu3_Loose.push_back(looseMuon(mu3));
 						mu4_Loose.push_back(looseMuon(mu4));
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream/master
 
 						if (isMC_) {
 							reco::GenParticleRef genMu1 = (muons->begin()+dimuonCand.userInt("mu1Index"))->genParticleRef();
