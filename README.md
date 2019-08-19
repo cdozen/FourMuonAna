@@ -33,7 +33,7 @@ scram b -j28
 
 ####
 
-# GT :
+# Global Tags :
 2016-->80X_dataRun2_2016SeptRepro_v7
 
 
