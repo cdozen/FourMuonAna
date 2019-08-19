@@ -23,9 +23,9 @@ process.source = cms.Source("PoolSource",
 #'file:/eos/uscms/store/user/l1upgrades/Run2017/fourmuon/MuOnia/BPHSkim-v4-Run2017B-17Nov2017-v1/180314_061950/0000/BPHSkim_12.root'
 #'file:/uscms_data/d3/huiwang/CMSSW_10_2_1/src/HeavyFlavorAnalysis/Onia2MuMu/test/BPHSkim_2018A_Rereco.root'		#A sample for 2018 Rereco
 #'file:/eos/uscms/store/user/lpcbphy/hui/MuOnia/BPHSkim-2018A_Rereco-Run2018A-17Sep2018-v1/190118_180123/0000/BPHSkim_390.root'		#A sample for 2018 Rereco
-'file:/eos/uscms/store/user/lpcbphy/hui/MuOnia/BPHSkim-2018B_Rereco-Run2018B-17Sep2018-v1/190104_025327/0000/BPHSkim_426.root'),
+#'file:/eos/uscms/store/user/lpcbphy/hui/MuOnia/BPHSkim-2018B_Rereco-Run2018B-17Sep2018-v1/190104_025327/0000/BPHSkim_426.root'),
 #'file:/eos/uscms/store/user/cdozen/FourMuon_Analysis/MuOnia/2016_v2/MuOnia/BPHSkim--Run2016D-07Aug17-v1/190620_113122/0000/BPHSkim_2016_95.root'  #new skim for 2016
-#'file:/eos/uscms/store/user/muahmad/FourMuon_Analysis/MuOnia/2017_v2/MuOnia/BPHSkim--Run2017B-17Nov2017-v1/190609_091355/0000/BPHSkim_2017_10.root' #new skim for 2017
+'file:/eos/uscms/store/user/muahmad/FourMuon_Analysis/MuOnia/2017_v2/MuOnia/BPHSkim--Run2017B-17Nov2017-v1/190609_091355/0000/BPHSkim_2017_10.root' #new skim for 2017
 #eventsToProcess = cms.untracked.VEventRange('317641:1352331850-317641:1352331850')
 )
 
