@@ -71,7 +71,7 @@ using namespace trigger;
 
 std::vector<std::vector<pat::Muon>> muons_previousEvent;
 std::vector<pat::Muon> muons_previousEvent_bestYMass;
-const ParticleMass muonMass(0.1056583);
+const ParticleMass muonMass(0.10565837);
 float muonSigma = muonMass*1E-6;
 //
 // class declaration
@@ -1918,7 +1918,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 			if (dimuonCand->mass() < OniaMassMin_ || dimuonCand->mass() > OniaMassMax_) continue;
 			if (dimuonCand->daughter("muon1")->charge() == dimuonCand->daughter("muon2")->charge() ) continue;
 			if (dimuonCand->daughter("muon1")->pt()<2.0 || dimuonCand->daughter("muon2")->pt()<2.0 ) continue;
-			if (dimuonCand->daughter("muon1")->eta()>2.4|| dimuonCand->daughter("muon2")->eta()>2.4) continue;
+			if (fabs(dimuonCand->daughter("muon1")->eta())>2.4|| fabs(dimuonCand->daughter("muon2")->eta())>2.4) continue;
 
 			//dimuon refit. 
 			//Here we use the KinematicParticleVertexFitter with muon mass. But in the Onia2MuMu skim, it was just KalmanVertexFitter. 
@@ -1960,7 +1960,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 			mumu_vFit_vertex_noMC = mumuVertexFitTree->currentDecayVertex();
 
 			//if (mumu_vFit_noMC->currentState().mass() < 8 || mumu_vFit_noMC->currentState().mass() > 12) continue;
-			if (fabs(mumu_vFit_noMC->currentState().mass()-upsilon_mass_) > (3*1.105*sqrt( mumu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6) ))) continue; 
+			if (fabs(mumu_vFit_noMC->currentState().mass()-upsilon_mass_) > (3*1.16*sqrt( mumu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6) ))) continue; 
 			if (ChiSquaredProbability((double)(mumu_vFit_vertex_noMC->chiSquared()),(double)(mumu_vFit_vertex_noMC->degreesOfFreedom())) < 0.005) continue;
 			//apply trigger cut: 36 for upsilon, 73 for Jpsi
 			//if ((trigger&triggerCuts_)==0) continue;
@@ -2248,14 +2248,16 @@ int MuMuGammaRootupler::looseMuon(edm::View<pat::Muon>::const_iterator rmu) {
 int MuMuGammaRootupler::mediumMuon(edm::View<pat::Muon>::const_iterator rmu) {
 	int goodMediumMuon=0;
 
-	bool goodGlob = rmu->isGlobalMuon() &&
-		rmu->globalTrack()->normalizedChi2() < 3 &&
-		rmu->combinedQuality().chi2LocalPosition < 12 &&
-		rmu->combinedQuality().trkKink < 20;
-	if(  muon::isLooseMuon(*rmu) &&
-			rmu->innerTrack()->validFraction() > 0.8 &&
-			muon::segmentCompatibility(*rmu) > (goodGlob ? 0.303 : 0.451)
-	  ) goodMediumMuon=1;
+	if(  muon::isMediumMuon(*rmu))
+	//bool goodGlob = rmu->isGlobalMuon() &&
+	//	rmu->globalTrack()->normalizedChi2() < 3 &&
+	//	rmu->combinedQuality().chi2LocalPosition < 12 &&
+	//	rmu->combinedQuality().trkKink < 20;
+	//if(  muon::isLooseMuon(*rmu) &&
+	//		rmu->innerTrack()->validFraction() > 0.8 &&
+	//		muon::segmentCompatibility(*rmu) > (goodGlob ? 0.303 : 0.451)
+	//  ) 
+	goodMediumMuon=1;
 
 	return goodMediumMuon;
 }
@@ -2263,16 +2265,18 @@ int MuMuGammaRootupler::mediumMuon(edm::View<pat::Muon>::const_iterator rmu) {
 int MuMuGammaRootupler::tightMuon(edm::View<pat::Muon>::const_iterator rmu, reco::Vertex vertex) {
 	int goodTightMuon=0;
 
-	if( rmu->isGlobalMuon()
-			&& rmu->isPFMuon()
-			&& rmu->globalTrack()->normalizedChi2()<10.0
-			&& rmu->globalTrack()->hitPattern().numberOfValidMuonHits()>0
-			&& rmu->numberOfMatchedStations()>1
-			&& fabs(rmu->muonBestTrack()->dxy( vertex.position() ))<0.2
-			&& fabs(rmu->muonBestTrack()->dz( vertex.position() )) < 0.5
-			&& rmu->innerTrack()->hitPattern().numberOfValidPixelHits()>0
-			&& rmu->track()->hitPattern().trackerLayersWithMeasurement()>5
-	  )  goodTightMuon = 1;
+	if( muon::isTightMuon(*rmu,vertex))
+	//if( rmu->isGlobalMuon()
+	//		&& rmu->isPFMuon()
+	//		&& rmu->globalTrack()->normalizedChi2()<10.0
+	//		&& rmu->globalTrack()->hitPattern().numberOfValidMuonHits()>0
+	//		&& rmu->numberOfMatchedStations()>1
+	//		&& fabs(rmu->muonBestTrack()->dxy( vertex.position() ))<0.2
+	//		&& fabs(rmu->muonBestTrack()->dz( vertex.position() )) < 0.5
+	//		&& rmu->innerTrack()->hitPattern().numberOfValidPixelHits()>0
+	//		&& rmu->track()->hitPattern().trackerLayersWithMeasurement()>5
+	//  ) 
+	goodTightMuon = 1;
 
 	return goodTightMuon;
 }
