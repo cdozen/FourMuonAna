@@ -1,4 +1,5 @@
-import FWCore.ParameterSet.Config as cms
+
+rt FWCore.ParameterSet.Config as cms
 
 rootuple = cms.EDAnalyzer('MuMuGammaRootupler',
                           dimuons = cms.InputTag("onia2MuMuPAT"),
@@ -14,12 +15,13 @@ rootuple = cms.EDAnalyzer('MuMuGammaRootupler',
                           isMC = cms.bool(False),
                           OnlyBest = cms.bool(False),
                           OnlyGen = cms.bool(False),
-#                         VERBOSE = cms.untracked.bool(False),              
-                          VERBOSE = cms.untracked.bool(True), 
+                         VERBOSE = cms.untracked.bool(False),              
+                          #VERBOSE = cms.untracked.bool(True), 
                           triggerList = cms.untracked.vstring(
                                     'HLT_Trimuon5_3p5_2_Upsilon_Muon_v',       #2018  HLT string
                                     #'HLT_TrimuonOpen_5_3p5_2_Upsilon_Muon_v',  #2018 HLT string
-                                    #'HLT_Trimuon2_Upsilon5_Muon_v'            #2017 HLT string
+                                    #'HLT_Trimuon2_Upsilon5_Muon_v'            #2017B HLT string
+                                    #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v'       #2017 C,D, E and F HLT string
                                     #'HLT_Dimuon0_Upsilon_Muon_v',             #2016 HLT string 
                                     #'HLT_Dimuon0_Phi_Barrel_v',               #2016 HLT string 
                                     #'HLT_Dimuon13_Upsilon_v',                 #2016 HLT string 
