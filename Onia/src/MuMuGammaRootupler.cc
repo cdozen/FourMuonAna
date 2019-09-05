@@ -147,373 +147,337 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 
 		TH1F* myDimuonMass_all;
  		TH1F* myY1SFitMass_all;
+
+
                 int Total_events_analyzed;
                 int Total_events_analyzed_triggered;
                 int Total_events_dimuon;
                 int Total_events_dimuon_trg_matched;
-                //int Total_events_trimuon_trg_matched;
-		uint_t run;
-		uint_t lumi;
-		uint_t event;
-		int_t  irank;
-		uint_t trigger;
-		int_t numprimaryvertices;
-		float_t pv_x;
-		float_t pv_y;
-		float_t pv_z;
+                int nEventsAnalyzed;
+		UInt_t run;
+		UInt_t lumi;
+		UInt_t event;
+		Int_t  irank;
+		UInt_t trigger;
+		Int_t numPrimaryVertices;
+		Float_t pv_x;
+		Float_t pv_y;
+		Float_t pv_z;
 
-		std::vector<int_t> v_mu1charge;
-		std::vector<int_t> v_mu2charge;
-		std::vector<float_t> v_mu1_d0;
-		std::vector<float_t> v_mu2_d0;
-		std::vector<float_t> v_mu1_d0err;
-		std::vector<float_t> v_mu2_d0err;
-		std::vector<float_t> v_mu1_dz;
-		std::vector<float_t> v_mu2_dz;
-		std::vector<float_t> v_mu1_dzerr;
-		std::vector<float_t> v_mu2_dzerr;
-		std::vector<float_t> v_mu1_vz;
-		std::vector<float_t> v_mu2_vz;
-		std::vector<float_t> v_mumufit_mass;
-		std::vector<float_t> v_mumufit_masserr;
-		std::vector<float_t> v_mumufit_vtxcl;
-		std::vector<float_t> v_mumufit_vtxcl2;
-		std::vector<float_t> v_mumufit_decayvtxx;
-		std::vector<float_t> v_mumufit_decayvtxy;
-		std::vector<float_t> v_mumufit_decayvtxz;
-		std::vector<float_t> v_mumufit_decayvtxxe;
-		std::vector<float_t> v_mumufit_decayvtxye;
-		std::vector<float_t> v_mumufit_decayvtxze;
+		std::vector<Int_t> v_mu1Charge;
+		std::vector<Int_t> v_mu2Charge;
+		std::vector<Float_t> v_mu1_d0;
+		std::vector<Float_t> v_mu2_d0;
+		std::vector<Float_t> v_mu1_d0err;
+		std::vector<Float_t> v_mu2_d0err;
+		std::vector<Float_t> v_mu1_dz;
+		std::vector<Float_t> v_mu2_dz;
+		std::vector<Float_t> v_mu1_dzerr;
+		std::vector<Float_t> v_mu2_dzerr;
+		std::vector<Float_t> v_mu1_vz;
+		std::vector<Float_t> v_mu2_vz;
+		std::vector<Float_t> v_mumufit_Mass;
+		std::vector<Float_t> v_mumufit_MassErr;
+		std::vector<Float_t> v_mumufit_VtxCL;
+		std::vector<Float_t> v_mumufit_VtxCL2;
+		std::vector<Float_t> v_mumufit_DecayVtxX;
+		std::vector<Float_t> v_mumufit_DecayVtxY;
+		std::vector<Float_t> v_mumufit_DecayVtxZ;
+		std::vector<Float_t> v_mumufit_DecayVtxXE;
+		std::vector<Float_t> v_mumufit_DecayVtxYE;
+		std::vector<Float_t> v_mumufit_DecayVtxZE;
 
-		tlorentzvector dimuon_p4;
-		tlorentzvector mu1_p4;
-		tlorentzvector mu2_p4;
-		int_t mu1charge;
-		int_t mu2charge;
-		float_t mu1_d0;
-		float_t mu2_d0;
-		float_t mu1_d0err;
-		float_t mu2_d0err;
-		float_t mu1_dz;
-		float_t mu2_dz;
-		float_t mu1_dzerr;
-		float_t mu2_dzerr;
-		float_t mu1_vz;
-		float_t mu2_vz;
-		float_t mumufit_mass;
-		float_t mumufit_masserr;
-		float_t mumufit_vtxcl;
-		float_t mumufit_vtxcl2;
-		float_t mumufit_decayvtxx;
-		float_t mumufit_decayvtxy;
-		float_t mumufit_decayvtxz;
-		float_t mumufit_decayvtxxe;
-		float_t mumufit_decayvtxye;
-		float_t mumufit_decayvtxze;
-		tlorentzvector mumufit_p4;
+		TLorentzVector dimuon_p4;
+		TLorentzVector mu1_p4;
+		TLorentzVector mu2_p4;
+		Int_t mu1Charge;
+		Int_t mu2Charge;
+		Float_t mu1_d0;
+		Float_t mu2_d0;
+		Float_t mu1_d0err;
+		Float_t mu2_d0err;
+		Float_t mu1_dz;
+		Float_t mu2_dz;
+		Float_t mu1_dzerr;
+		Float_t mu2_dzerr;
+		Float_t mu1_vz;
+		Float_t mu2_vz;
+		Float_t mumufit_Mass;
+		Float_t mumufit_MassErr;
+		Float_t mumufit_VtxCL;
+		Float_t mumufit_VtxCL2;
+		Float_t mumufit_DecayVtxX;
+		Float_t mumufit_DecayVtxY;
+		Float_t mumufit_DecayVtxZ;
+		Float_t mumufit_DecayVtxXE;
+		Float_t mumufit_DecayVtxYE;
+		Float_t mumufit_DecayVtxZE;
+		TLorentzVector mumufit_p4;
 
-		std::vector<float_t> fourmufit_mass_allcomb_mix;
-		float_t fourmufit_mass_mix;
-		float_t fourmufit_masserr_mix;
-		float_t fourmufit_vtxx_mix;
-		float_t fourmufit_vtxy_mix;
-		float_t fourmufit_vtxz_mix;
-		float_t fourmufit_vtxprob_mix;
-		float_t fourmufit_chi2_mix;
-		tlorentzvector fourmufit_p4_mix;
-		int_t fourmufit_ndof_mix;
-		int_t fourmufit_3plus1_mix;
-		int_t mu3charge_mix;
-		int_t mu4charge_mix;
-		float_t mu3_d0_mix;
-		float_t mu4_d0_mix;
-		float_t mu3_d0err_mix;
-		float_t mu4_d0err_mix;
-		float_t mu3_dz_mix;
-		float_t mu4_dz_mix;
-		float_t mu3_dzerr_mix;
-		float_t mu4_dzerr_mix;
-		tlorentzvector fourmufit_mu1p4_mix;
-		tlorentzvector fourmufit_mu2p4_mix;
-		tlorentzvector fourmufit_mu3p4_mix;
-		tlorentzvector fourmufit_mu4p4_mix;
-		tlorentzvector mu3_p4_mix;
-		tlorentzvector mu4_p4_mix;
-		float_t fourmufit_mass_mix3evts;
-		float_t fourmufit_vtxprob_mix3evts;
-		tlorentzvector fourmufit_p4_mix3evts;
+		std::vector<Float_t> fourMuFit_Mass_allComb_mix;
+		Float_t fourMuFit_Mass_mix;
+		Float_t fourMuFit_MassErr_mix;
+		Float_t fourMuFit_VtxX_mix;
+		Float_t fourMuFit_VtxY_mix;
+		Float_t fourMuFit_VtxZ_mix;
+		Float_t fourMuFit_VtxProb_mix;
+		Float_t fourMuFit_Chi2_mix;
+		TLorentzVector fourMuFit_p4_mix;
+		Int_t fourMuFit_ndof_mix;
+		Int_t fourMuFit_3plus1_mix;
+		Int_t mu3Charge_mix;
+		Int_t mu4Charge_mix;
+		Float_t mu3_d0_mix;
+		Float_t mu4_d0_mix;
+		Float_t mu3_d0err_mix;
+		Float_t mu4_d0err_mix;
+		Float_t mu3_dz_mix;
+		Float_t mu4_dz_mix;
+		Float_t mu3_dzerr_mix;
+		Float_t mu4_dzerr_mix;
+		TLorentzVector fourMuFit_mu1p4_mix;
+		TLorentzVector fourMuFit_mu2p4_mix;
+		TLorentzVector fourMuFit_mu3p4_mix;
+		TLorentzVector fourMuFit_mu4p4_mix;
+		TLorentzVector mu3_p4_mix;
+		TLorentzVector mu4_p4_mix;
+		Float_t fourMuFit_Mass_mix3evts;
+		Float_t fourMuFit_VtxProb_mix3evts;
+		TLorentzVector fourMuFit_p4_mix3evts;
 
-		std::vector<float_t> genbkg_mu1_pt;
-		std::vector<float_t> genbkg_mu1_eta;
-		std::vector<float_t> genbkg_mu1_phi;
-		std::vector<float_t> genbkg_mu1_mass;
-		std::vector<float_t> genbkg_mu2_pt;
-		std::vector<float_t> genbkg_mu2_eta;
-		std::vector<float_t> genbkg_mu2_phi;
-		std::vector<float_t> genbkg_mu2_mass;
-		std::vector<float_t> genbkg_mu3_pt;
-		std::vector<float_t> genbkg_mu3_eta;
-		std::vector<float_t> genbkg_mu3_phi;
-		std::vector<float_t> genbkg_mu3_mass;
-		std::vector<float_t> genbkg_mu4_pt;
-		std::vector<float_t> genbkg_mu4_eta;
-		std::vector<float_t> genbkg_mu4_phi;
-		std::vector<float_t> genbkg_mu4_mass;
+		std::vector<Float_t> genbkg_mu1_Pt;
+		std::vector<Float_t> genbkg_mu1_Eta;
+		std::vector<Float_t> genbkg_mu1_Phi;
+		std::vector<Float_t> genbkg_mu1_Mass;
+		std::vector<Float_t> genbkg_mu2_Pt;
+		std::vector<Float_t> genbkg_mu2_Eta;
+		std::vector<Float_t> genbkg_mu2_Phi;
+		std::vector<Float_t> genbkg_mu2_Mass;
+		std::vector<Float_t> genbkg_mu3_Pt;
+		std::vector<Float_t> genbkg_mu3_Eta;
+		std::vector<Float_t> genbkg_mu3_Phi;
+		std::vector<Float_t> genbkg_mu3_Mass;
+		std::vector<Float_t> genbkg_mu4_Pt;
+		std::vector<Float_t> genbkg_mu4_Eta;
+		std::vector<Float_t> genbkg_mu4_Phi;
+		std::vector<Float_t> genbkg_mu4_Mass;
 
-		std::vector<float_t> fourmufit_mass_allcomb;
-		std::vector<float_t> fourmufit_mass;
-		std::vector<float_t> fourmufit_masserr;
-		std::vector<float_t> fourmufit_pt;
-		std::vector<float_t> fourmufit_eta;
-		std::vector<float_t> fourmufit_phi;
-		std::vector<float_t> fourmufit_vtxx;
-		std::vector<float_t> fourmufit_vtxy;
-		std::vector<float_t> fourmufit_vtxz;
-		std::vector<float_t> fourmufit_vtxprob;
-		std::vector<float_t> fourmufit_chi2;
-		std::vector<int_t> fourmufit_ndof;
-		std::vector<float_t> fourmufit_mu1pt;
-		std::vector<float_t> fourmufit_mu1eta;
-		std::vector<float_t> fourmufit_mu1phi;
-		std::vector<float_t> fourmufit_mu1e;
-		std::vector<float_t> fourmufit_mu2pt;
-		std::vector<float_t> fourmufit_mu2eta;
-		std::vector<float_t> fourmufit_mu2phi;
-		std::vector<float_t> fourmufit_mu2e;
-		std::vector<float_t> fourmufit_mu3pt;
-		std::vector<float_t> fourmufit_mu3eta;
-		std::vector<float_t> fourmufit_mu3phi;
-		std::vector<float_t> fourmufit_mu3e;
-		std::vector<float_t> fourmufit_mu4pt;
-		std::vector<float_t> fourmufit_mu4eta;
-		std::vector<float_t> fourmufit_mu4phi;
-		std::vector<float_t> fourmufit_mu4e;
-		std::vector<float_t> mu3_pt;
-		std::vector<float_t> mu3_eta;
-		std::vector<float_t> mu3_phi;
-		std::vector<float_t> mu3_e;
-		std::vector<float_t> mu4_pt;
-		std::vector<float_t> mu4_eta;
-		std::vector<float_t> mu4_phi;
-		std::vector<float_t> mu4_e;
-		std::vector<int_t> mu3charge;
-		std::vector<int_t> mu4charge;
-		std::vector<float_t> mu3_d0;
-		std::vector<float_t> mu4_d0;
-		std::vector<float_t> mu3_d0err;
-		std::vector<float_t> mu4_d0err;
-		std::vector<float_t> mu3_dz;
-		std::vector<float_t> mu4_dz;
-		std::vector<float_t> mu3_dzerr;
-		std::vector<float_t> mu4_dzerr;
-		std::vector<int_t> mu1_tight;
-		std::vector<int_t> mu2_tight;
-		std::vector<int_t> mu3_tight;
-		std::vector<int_t> mu4_tight;
-		std::vector<int_t> mu1_medium;
-		std::vector<int_t> mu2_medium;
-		std::vector<int_t> mu3_medium;
-		std::vector<int_t> mu4_medium;
-		std::vector<int_t> mu1_loose;
-		std::vector<int_t> mu2_loose;
-		std::vector<int_t> mu3_loose;
-		std::vector<int_t> mu4_loose;
-		std::vector<int_t> mu1_pdgid;
-		std::vector<int_t> mu2_pdgid;
-		std::vector<int_t> mu3_pdgid;
-		std::vector<int_t> mu4_pdgid;
+		std::vector<Float_t> fourMuFit_Mass_allComb;
+		std::vector<Float_t> fourMuFit_Mass;
+		std::vector<Float_t> fourMuFit_MassErr;
+		std::vector<Float_t> fourMuFit_Pt;
+		std::vector<Float_t> fourMuFit_Eta;
+		std::vector<Float_t> fourMuFit_Phi;
+		std::vector<Float_t> fourMuFit_VtxX;
+		std::vector<Float_t> fourMuFit_VtxY;
+		std::vector<Float_t> fourMuFit_VtxZ;
+		std::vector<Float_t> fourMuFit_VtxProb;
+		std::vector<Float_t> fourMuFit_Chi2;
+		std::vector<Int_t> fourMuFit_ndof;
+		std::vector<Float_t> fourMuFit_mu1Pt;
+		std::vector<Float_t> fourMuFit_mu1Eta;
+		std::vector<Float_t> fourMuFit_mu1Phi;
+		std::vector<Float_t> fourMuFit_mu1E;
+		std::vector<Float_t> fourMuFit_mu2Pt;
+		std::vector<Float_t> fourMuFit_mu2Eta;
+		std::vector<Float_t> fourMuFit_mu2Phi;
+		std::vector<Float_t> fourMuFit_mu2E;
+		std::vector<Float_t> fourMuFit_mu3Pt;
+		std::vector<Float_t> fourMuFit_mu3Eta;
+		std::vector<Float_t> fourMuFit_mu3Phi;
+		std::vector<Float_t> fourMuFit_mu3E;
+		std::vector<Float_t> fourMuFit_mu4Pt;
+		std::vector<Float_t> fourMuFit_mu4Eta;
+		std::vector<Float_t> fourMuFit_mu4Phi;
+		std::vector<Float_t> fourMuFit_mu4E;
+		std::vector<Float_t> mu3_Pt;
+		std::vector<Float_t> mu3_Eta;
+		std::vector<Float_t> mu3_Phi;
+		std::vector<Float_t> mu3_E;
+		std::vector<Float_t> mu4_Pt;
+		std::vector<Float_t> mu4_Eta;
+		std::vector<Float_t> mu4_Phi;
+		std::vector<Float_t> mu4_E;
+		std::vector<Int_t> mu3Charge;
+		std::vector<Int_t> mu4Charge;
+		std::vector<Float_t> mu3_d0;
+		std::vector<Float_t> mu4_d0;
+		std::vector<Float_t> mu3_d0err;
+		std::vector<Float_t> mu4_d0err;
+		std::vector<Float_t> mu3_dz;
+		std::vector<Float_t> mu4_dz;
+		std::vector<Float_t> mu3_dzerr;
+		std::vector<Float_t> mu4_dzerr;
+		std::vector<Int_t> mu1_Tight;
+		std::vector<Int_t> mu2_Tight;
+		std::vector<Int_t> mu3_Tight;
+		std::vector<Int_t> mu4_Tight;
+		std::vector<Int_t> mu1_Medium;
+		std::vector<Int_t> mu2_Medium;
+		std::vector<Int_t> mu3_Medium;
+		std::vector<Int_t> mu4_Medium;
+		std::vector<Int_t> mu1_Loose;
+		std::vector<Int_t> mu2_Loose;
+		std::vector<Int_t> mu3_Loose;
+		std::vector<Int_t> mu4_Loose;
+		std::vector<Int_t> mu1_pdgID;
+		std::vector<Int_t> mu2_pdgID;
+		std::vector<Int_t> mu3_pdgID;
+		std::vector<Int_t> mu4_pdgID;
 
-		/*
-			std::vector<float_t> fourmufit_mass_allcomb;
-			float_t fourmufit_mass;
-			float_t fourmufit_masserr;
-			float_t fourmufit_vtxx;
-			float_t fourmufit_vtxy;
-			float_t fourmufit_vtxz;
-			float_t fourmufit_vtxprob;
-			float_t fourmufit_chi2;
-			int_t fourmufit_ndof;
-			tlorentzvector fourmufit_p4;
-			int_t mu3charge;
-			int_t mu4charge;
-			float_t mu3_d0;
-			float_t mu4_d0;
-			float_t mu3_d0err;
-			float_t mu4_d0err;
-			float_t mu3_dz;
-			float_t mu4_dz;
-			float_t mu3_dzerr;
-			float_t mu4_dzerr;
-			tlorentzvector fourmufit_mu1p4;
-			tlorentzvector fourmufit_mu2p4;
-			tlorentzvector fourmufit_mu3p4;
-			tlorentzvector fourmufit_mu4p4;
-			tlorentzvector mu3_p4;
-			tlorentzvector mu4_p4;
-			int_t mu1_tight;
-			int_t mu2_tight;
-			int_t mu3_tight;
-			int_t mu4_tight;
-			int_t mu3_pdgid;
-			int_t mu4_pdgid;
-			std::vector<pat::compositecandidate> upsilonmuons;
-			std::vector<pat::muon> therestmuons;
-			*/
+		TLorentzVector dimuon_p4_bestYMass;
+		TLorentzVector mu1_p4_bestYMass;
+		TLorentzVector mu2_p4_bestYMass;
+		Int_t mu1Charge_bestYMass;
+		Int_t mu2Charge_bestYMass;
+		Float_t mu1_d0_bestYMass;
+		Float_t mu2_d0_bestYMass;
+		Float_t mu1_d0err_bestYMass;
+		Float_t mu2_d0err_bestYMass;
+		Float_t mu1_dz_bestYMass;
+		Float_t mu2_dz_bestYMass;
+		Float_t mu1_dzerr_bestYMass;
+		Float_t mu2_dzerr_bestYMass;
+		Float_t mumufit_Mass_bestYMass;
+		Float_t mumufit_MassErr_bestYMass;
+		Float_t mumufit_VtxCL_bestYMass;
+		Float_t mumufit_VtxCL2_bestYMass;
+		Float_t mumufit_DecayVtxX_bestYMass;
+		Float_t mumufit_DecayVtxY_bestYMass;
+		Float_t mumufit_DecayVtxZ_bestYMass;
+		Float_t mumufit_DecayVtxXE_bestYMass;
+		Float_t mumufit_DecayVtxYE_bestYMass;
+		Float_t mumufit_DecayVtxZE_bestYMass;
+		TLorentzVector mumufit_p4_bestYMass;
+		Int_t bestVertex_and_bestYMass;
 
-		tlorentzvector dimuon_p4_bestymass;
-		tlorentzvector mu1_p4_bestymass;
-		tlorentzvector mu2_p4_bestymass;
-		int_t mu1charge_bestymass;
-		int_t mu2charge_bestymass;
-		float_t mu1_d0_bestymass;
-		float_t mu2_d0_bestymass;
-		float_t mu1_d0err_bestymass;
-		float_t mu2_d0err_bestymass;
-		float_t mu1_dz_bestymass;
-		float_t mu2_dz_bestymass;
-		float_t mu1_dzerr_bestymass;
-		float_t mu2_dzerr_bestymass;
-		float_t mumufit_mass_bestymass;
-		float_t mumufit_masserr_bestymass;
-		float_t mumufit_vtxcl_bestymass;
-		float_t mumufit_vtxcl2_bestymass;
-		float_t mumufit_decayvtxx_bestymass;
-		float_t mumufit_decayvtxy_bestymass;
-		float_t mumufit_decayvtxz_bestymass;
-		float_t mumufit_decayvtxxe_bestymass;
-		float_t mumufit_decayvtxye_bestymass;
-		float_t mumufit_decayvtxze_bestymass;
-		tlorentzvector mumufit_p4_bestymass;
-		int_t bestvertex_and_bestymass;
+		std::vector<Float_t> fourMuFit_Mass_allComb_mix_bestYMass;
+		Float_t fourMuFit_Mass_mix_bestYMass;
+		Float_t fourMuFit_MassErr_mix_bestYMass;
+		Float_t fourMuFit_VtxX_mix_bestYMass;
+		Float_t fourMuFit_VtxY_mix_bestYMass;
+		Float_t fourMuFit_VtxZ_mix_bestYMass;
+		Float_t fourMuFit_VtxProb_mix_bestYMass;
+		Float_t fourMuFit_Chi2_mix_bestYMass;
+		Int_t fourMuFit_ndof_mix_bestYMass;
+		Int_t fourMuFit_3plus1_mix_bestYMass;
+		TLorentzVector fourMuFit_p4_mix_bestYMass;
+		Int_t mu3Charge_mix_bestYMass;
+		Int_t mu4Charge_mix_bestYMass;
+		Float_t mu3_d0_mix_bestYMass;
+		Float_t mu4_d0_mix_bestYMass;
+		Float_t mu3_d0err_mix_bestYMass;
+		Float_t mu4_d0err_mix_bestYMass;
+		Float_t mu3_dz_mix_bestYMass;
+		Float_t mu4_dz_mix_bestYMass;
+		Float_t mu3_dzerr_mix_bestYMass;
+		Float_t mu4_dzerr_mix_bestYMass;
+		TLorentzVector fourMuFit_mu1p4_mix_bestYMass;
+		TLorentzVector fourMuFit_mu2p4_mix_bestYMass;
+		TLorentzVector fourMuFit_mu3p4_mix_bestYMass;
+		TLorentzVector fourMuFit_mu4p4_mix_bestYMass;
+		TLorentzVector mu3_p4_mix_bestYMass;
+		TLorentzVector mu4_p4_mix_bestYMass;
 
-		std::vector<float_t> fourmufit_mass_allcomb_mix_bestymass;
-		float_t fourmufit_mass_mix_bestymass;
-		float_t fourmufit_masserr_mix_bestymass;
-		float_t fourmufit_vtxx_mix_bestymass;
-		float_t fourmufit_vtxy_mix_bestymass;
-		float_t fourmufit_vtxz_mix_bestymass;
-		float_t fourmufit_vtxprob_mix_bestymass;
-		float_t fourmufit_chi2_mix_bestymass;
-		int_t fourmufit_ndof_mix_bestymass;
-		int_t fourmufit_3plus1_mix_bestymass;
-		tlorentzvector fourmufit_p4_mix_bestymass;
-		int_t mu3charge_mix_bestymass;
-		int_t mu4charge_mix_bestymass;
-		float_t mu3_d0_mix_bestymass;
-		float_t mu4_d0_mix_bestymass;
-		float_t mu3_d0err_mix_bestymass;
-		float_t mu4_d0err_mix_bestymass;
-		float_t mu3_dz_mix_bestymass;
-		float_t mu4_dz_mix_bestymass;
-		float_t mu3_dzerr_mix_bestymass;
-		float_t mu4_dzerr_mix_bestymass;
-		tlorentzvector fourmufit_mu1p4_mix_bestymass;
-		tlorentzvector fourmufit_mu2p4_mix_bestymass;
-		tlorentzvector fourmufit_mu3p4_mix_bestymass;
-		tlorentzvector fourmufit_mu4p4_mix_bestymass;
-		tlorentzvector mu3_p4_mix_bestymass;
-		tlorentzvector mu4_p4_mix_bestymass;
+		std::vector<Float_t> fourMuFit_Mass_allComb_bestYMass;
+		Float_t fourMuFit_Mass_bestYMass;
+		Float_t fourMuFit_MassErr_bestYMass;
+		Float_t fourMuFit_VtxX_bestYMass;
+		Float_t fourMuFit_VtxY_bestYMass;
+		Float_t fourMuFit_VtxZ_bestYMass;
+		Float_t fourMuFit_VtxProb_bestYMass;
+		Float_t fourMuFit_Chi2_bestYMass;
+		Int_t fourMuFit_ndof_bestYMass;
+		TLorentzVector fourMuFit_p4_bestYMass;
+		Int_t mu3Charge_bestYMass;
+		Int_t mu4Charge_bestYMass;
+		Float_t mu3_d0_bestYMass;
+		Float_t mu4_d0_bestYMass;
+		Float_t mu3_d0err_bestYMass;
+		Float_t mu4_d0err_bestYMass;
+		Float_t mu3_dz_bestYMass;
+		Float_t mu4_dz_bestYMass;
+		Float_t mu3_dzerr_bestYMass;
+		Float_t mu4_dzerr_bestYMass;
+		TLorentzVector fourMuFit_mu1p4_bestYMass;
+		TLorentzVector fourMuFit_mu2p4_bestYMass;
+		TLorentzVector fourMuFit_mu3p4_bestYMass;
+		TLorentzVector fourMuFit_mu4p4_bestYMass;
+		TLorentzVector mu3_p4_bestYMass;
+		TLorentzVector mu4_p4_bestYMass;
+		Int_t mu1_Tight_bestYMass;
+		Int_t mu2_Tight_bestYMass;
+		Int_t mu3_Tight_bestYMass;
+		Int_t mu4_Tight_bestYMass;
+		Int_t mu3_pdgID_bestYMass;
+		Int_t mu4_pdgID_bestYMass;
+                std::string rootFileName;
+                edm::InputTag triggerEventTag_;   
+                std::string hltName_;
+                std::string   triggerName_;
+                std::string hlTriggerSummaryAOD_; 
+                edm::TriggerNames triggerNames;
+                bool VERBOSE;
+                float trg_Match_dR_cut, trg_Match_dP_cut,trg_Match_dP_ratio_cut; 
+                std::vector<std::string> triggerList;
+                bool checkTrigger;
+                int runNumber;
+  		std::vector < reco::MuonCollection::const_iterator > allL1TrigMuons;
+  		std::vector < reco::MuonCollection::const_iterator > allL2TrigMuons;
+  		std::vector < reco::MuonCollection::const_iterator > allL3TrigMuons;
+   		std::vector<TLorentzVector> allTrigMuons;
+                std::vector<TLorentzVector> allRestTrigMuons;
+  		std::vector < GlobalVector > allMuL1TriggerVectors;
+  		std::vector < GlobalVector > allMuL2TriggerVectors;
+  		std::vector < GlobalVector > allMuL3TriggerVectors_lowEff;
+  		std::vector < GlobalVector > allMuL3TriggerVectors_highEff;
+  		std::vector < GlobalVector > allMuHLTTriggerVectors;
+                int lastTriggerModule;
+                HLTConfigProvider hltConfig_;
+		TTree *onia_tree;
+		TTree *gen_tree;
 
-		std::vector<float_t> fourmufit_mass_allcomb_bestymass;
-		float_t fourmufit_mass_bestymass;
-		float_t fourmufit_masserr_bestymass;
-		float_t fourmufit_vtxx_bestymass;
-		float_t fourmufit_vtxy_bestymass;
-		float_t fourmufit_vtxz_bestymass;
-		float_t fourmufit_vtxprob_bestymass;
-		float_t fourmufit_chi2_bestymass;
-		int_t fourmufit_ndof_bestymass;
-		tlorentzvector fourmufit_p4_bestymass;
-		int_t mu3charge_bestymass;
-		int_t mu4charge_bestymass;
-		float_t mu3_d0_bestymass;
-		float_t mu4_d0_bestymass;
-		float_t mu3_d0err_bestymass;
-		float_t mu4_d0err_bestymass;
-		float_t mu3_dz_bestymass;
-		float_t mu4_dz_bestymass;
-		float_t mu3_dzerr_bestymass;
-		float_t mu4_dzerr_bestymass;
-		tlorentzvector fourmufit_mu1p4_bestymass;
-		tlorentzvector fourmufit_mu2p4_bestymass;
-		tlorentzvector fourmufit_mu3p4_bestymass;
-		tlorentzvector fourmufit_mu4p4_bestymass;
-		tlorentzvector mu3_p4_bestymass;
-		tlorentzvector mu4_p4_bestymass;
-		int_t mu1_tight_bestymass;
-		int_t mu2_tight_bestymass;
-		int_t mu3_tight_bestymass;
-		int_t mu4_tight_bestymass;
-		int_t mu3_pdgid_bestymass;
-		int_t mu4_pdgid_bestymass;
-                std::string rootfilename;
-                edm::inputtag triggereventtag_;   
-                std::string hltname_;
-                std::string   triggername_;
-                std::string hltriggersummaryaod_; 
-                edm::triggernames triggernames;
-                bool verbose;
-                float trg_match_dr_cut, trg_match_dp_cut,trg_match_dp_ratio_cut; 
-                std::vector<std::string> triggerlist;
-                bool checktrigger;
-                int runnumber;
-  		std::vector < reco::muoncollection::const_iterator > alll1trigmuons;
-  		std::vector < reco::muoncollection::const_iterator > alll2trigmuons;
-  		std::vector < reco::muoncollection::const_iterator > alll3trigmuons;
-   		std::vector<tlorentzvector> alltrigmuons;
-                std::vector<tlorentzvector> allresttrigmuons;
-  		std::vector < globalvector > allmul1triggervectors;
-  		std::vector < globalvector > allmul2triggervectors;
-  		std::vector < globalvector > allmul3triggervectors_loweff;
-  		std::vector < globalvector > allmul3triggervectors_higheff;
-  		std::vector < globalvector > allmuhlttriggervectors;
-                int lasttriggermodule;
-                hltconfigprovider hltconfig_;
-		ttree *onia_tree;
-		ttree *gen_tree;
-
-		int_t mother_pdgid;
-		int_t dimuon_pdgid;
-		tlorentzvector gen_dimuon_p4;
-		tlorentzvector gen_mu1_p4;
-		tlorentzvector gen_mu2_p4;
-		edm::edgettokent<reco::genparticlecollection> gencands_;
-		edm::edgettokent<pat::packedgenparticlecollection> packcands_;
+		Int_t mother_pdgId;
+		Int_t dimuon_pdgId;
+		TLorentzVector gen_dimuon_p4;
+		TLorentzVector gen_mu1_p4;
+		TLorentzVector gen_mu2_p4;
+		edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
+		edm::EDGetTokenT<pat::PackedGenParticleCollection> packCands_;
 };
-
 //
 // constructors and destructor
 //
-mumugammarootupler::mumugammarootupler(const edm::parameterset & iconfig):
-	dimuon_label(consumes<pat::compositecandidatecollection>(iconfig.getparameter< edm::inputtag>("dimuons"))),
-	conversion_label(consumes<pat::compositecandidatecollection>(iconfig.getparameter< edm::inputtag>("conversions"))),
-	primaryvertices_label(consumes<reco::vertexcollection>(iconfig.getparameter< edm::inputtag>("primaryvertices"))),
-	bs_label(consumes<reco::beamspot>(iconfig.getparameter<edm::inputtag>("offlinebeamspot"))),
-	muon_label(consumes<edm::view<pat::muon>>(iconfig.getparameter< edm::inputtag>("muons"))),
-	triggerresultstok_(consumes<edm::triggerresults>(iconfig.getparameter<edm::inputtag>("triggerresults"))),
-        triggereventtok_(consumes<trigger::triggerevent>(iconfig.getparameter<edm::inputtag>("triggersummaryaod"))),
-	pdgid_(iconfig.getparameter<uint32_t>("onia_pdgid")),
-	oniamasscuts_(iconfig.getparameter<std::vector<double>>("onia_mass_cuts")),
-	ismc_(iconfig.getparameter<bool>("ismc")),
-        istriggermatch_(iconfig.getparameter<bool>("triggermatch")),
-	onlybest_(iconfig.getparameter<bool>("onlybest")),
-	onlygen_(iconfig.getparameter<bool>("onlygen")),
-	upsilon_mass_(iconfig.getparameter<double>("upsilon_mass")),
-	triggercuts_(iconfig.getparameter<uint32_t>("triggercuts")),
-	best4muoncand_(iconfig.getparameter<bool>("best4muoncand")),
-        verbose(iconfig.getuntrackedparameter<bool>("verbose",false)),
-        trg_match_dr_cut(iconfig.getparameter<double>("trg_match_dr")),
-        trg_match_dp_cut(iconfig.getparameter<double>("trg_match_dp")),
-        trg_match_dp_ratio_cut(iconfig.getparameter<double>("trg_match_dp_ratio")),
-        triggerlist(iconfig.getuntrackedparameter<std::vector<std::string>>("triggerlist"))
+        MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
+	dimuon_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter< edm::InputTag>("dimuons"))),
+	conversion_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter< edm::InputTag>("conversions"))),
+	primaryVertices_Label(consumes<reco::VertexCollection>(iConfig.getParameter< edm::InputTag>("primaryVertices"))),
+	bs_Label(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("offlineBeamSpot"))),
+	muon_Label(consumes<edm::View<pat::muon>>(iConfig.getParameter< edm::InputTag>("muons"))),
+	triggerResultsTok_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("TriggerResults"))),
+        triggerEventTok_(consumes<trigger::TriggerEvent>(iConfig.getParameter<edm::InputTag>("TriggerSummaryAOD")),
+	pdgid_(iConfig.getParameter<uint32_t>("onia_pdgid")),
+	OniaMassCuts_(iConfig.getParameter<std::vector<double>>("onia_mass_cuts")),
+	isMC_(iConfig.getParameter<bool>("isMC")),
+        istriggermatch_(iConfig.getParameter<bool>("triggermatch")),
+	OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
+	OnlyGen_(iConfig.getParameter<bool>("OnlyGen")),
+	upsilon_mass_(iConfig.getParameter<double>("upsilon_mass")),
+	triggerCuts_(iConfig.getParameter<uint32_t>("triggerCuts")),
+	best4muonCand_(iConfig.getParameter<bool>("best4muonCand")),
+        VERBOSE(iConfig.getUntrackedParameter<bool>("VERBOSE",false)),
+        TRG_Match_DR_cut(iConfig.getParameter<double>("TRG_Match_DR")),
+        Trg_Match_dD_cut(iConfig.getParameter<double>("Trg_Match_dD")),
+        Trg_Match_dD_ratio_cut(iConfig.getParameter<double>("Trg_Match_dD_ratio")),
+        triggerList(iConfig.getUntrackedParameter<std::vector<std::string>>("triggerList"))
 {
-	edm::service < tfileservice > fs;
-	onia_tree = fs->make < ttree > ("oniatree", "tree of mumugamma");
-	gen_tree = fs->make < ttree > ("gentree", "tree of gencand");
-        total_events_analyzed = 0;
-        total_events_analyzed_triggered = 0 ;
-        total_events_dimuon= 0;
-        total_events_dimuon_trg_matched = 0;
+	edm::service < TFileService > fs;
+	onia_tree = fs->make < TTree > ("oniaTree", "Tree of MuMuGamma");
+	gen_tree = fs->make < TTree > ("genTree", "Tree of genCand");
+        Total_events_analyzed = 0;
+        Total_events_analyzed_triggered = 0 ;
+        Total_events_dimuon= 0;
+        Total_events_dimuon_trg_matched = 0;
         Total_event_4mu = 0;
         runNumber = -99;
         checkTrigger =true;
@@ -890,12 +854,12 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
 
   const unsigned int n(hltConfig_.size());
   const unsigned int triggerIndex(hltConfig_.triggerIndex(triggerName));
-  if(verbose){
+  if(VERBOSE){
     std::cout<<" n = "<<n<<" triggerIndex = "<<triggerIndex<<" size = "<<hltConfig_.size()<<std::endl;
     std::cout<<" Analyze triggerName : "<<triggerName<<std::endl;
   }
   if (triggerIndex>=n) {
-    if(verbose){
+    if(VERBOSE){
       cout << "FourmuonAnalyzer4::analyzeTrigger: path "
            << triggerName << " - not found!" << endl;
     }
@@ -905,7 +869,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
   const unsigned int m(hltConfig_.size(triggerIndex));
   const vector<string>& moduleLabels(hltConfig_.moduleLabels(triggerIndex));
   lastTriggerModule = moduleIndex;
-  if(verbose){
+  if(VERBOSE){
     cout << "FourmuonAnalyzer::analyzeTrigger: path "
          << triggerName << " [" << triggerIndex << "]" << endl;
          
@@ -931,11 +895,11 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
     const string  moduleType(hltConfig_.moduleType(moduleLabel));
     // check whether the module is packed up in TriggerEvent product
         const unsigned int filterIndex(hltE->filterIndex(InputTag(moduleLabel,"",hltName_)));
-    if(verbose){
+    if(VERBOSE){
       std::cout<<" j = "<<j<<" modLabel/moduleType = "<<moduleLabel<<"/"<<moduleType<<" filterIndex = "<<filterIndex<<" sizeF = "<<hltE->sizeFilters()<<std::endl;
     }
     if (filterIndex<hltE->sizeFilters()) { 
-          if(verbose){
+          if(VERBOSE){
         cout << " 'L3' (or 'L1', 'L2') filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
       }
       const Vids& VIDS (hltE->filterIds(filterIndex));
@@ -944,7 +908,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       const size_type nK(KEYS.size());
       assert(nI==nK);
       const size_type n(max(nI,nK));
-      if(verbose){
+      if(VERBOSE){
         cout << "   " << n  << " accepted 'L3' (or 'L1', 'L2') objects found: " << endl;
       }
       const TriggerObjectCollection& TOC(hltE->getObjects());
@@ -954,51 +918,51 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
         }
         const TriggerObject& TO(TOC[KEYS[i]]);
         GlobalVector momentumT0(TO.px(),TO.py(),TO.pz());
-        if(verbose){
+        if(VERBOSE){
           std::cout<<" i = "<<i<<" moduleLabel/moduleType : "<<moduleLabel<<"/"<<moduleType<<std::endl;
         }
         if(13==TO.id() || -13==TO.id() || 0==TO.id()){//TO.id() --> L1 Mu is always 0 (?)
-          if(verbose){
+          if(VERBOSE){
             std::cout<<" current moduleType = "<<moduleType<<std::endl;
           }  
          if("HLTL1TSeed" == moduleType && "hltL1sTripleMu0orTripleMu500" == moduleLabel){ // HLT_Dimuon0_Jpsi_Muon_v5
             passMomenta.push_back(momentumT0);
-            if(verbose){
+            if(VERBOSE){
               std::cout<<" L1 object found"<<std::endl;
             }
           }
           else if("HLTMuonL2FromL1TPreFilter"==moduleType){//HLT_Dimuon0_Jpsi_Muon_v5
             passMomenta.push_back(momentumT0);
-            if(verbose){
+            if(VERBOSE){
               std::cout<<" L2 object found"<<std::endl;
             }
           }
           else if("HLTMuonL3PreFilter"==moduleType || "HLTMuonIsoFilter"==moduleType){
             passMomenta.push_back(momentumT0);
-            if(verbose){
+            if(VERBOSE){
               std::cout<<" L3 (highEff) object found"<<std::endl;
             }
           }
           else if("HLTDiMuonGlbTrkFilter"==moduleType){
             passMomenta.push_back(momentumT0);
-            if(verbose){
+            if(VERBOSE){
               std::cout<<" L3 (lowEff) object found"<<std::endl;
             }
           }
           else if("HLT2MuonMuonDZ"==moduleType || "HLTMuonIsoFilter"==moduleType || ("HLTMuonL3PreFilter"==moduleType)){
             passMomenta.push_back(momentumT0);
-            if(verbose){
+            if(VERBOSE){
               std::cout<<" HLT object found"<<std::endl;
             }
           }
                    else if("HLTMuonDimuonL3Filter"==moduleType){//HLT_Dimuon0_Jpsi_Muon_v5
             passMomenta.push_back(momentumT0);
-            if(verbose){
+            if(VERBOSE){
               std::cout<<" HLT L3 filter object found"<<std::endl;
             }
           }
         }
-        if(verbose){
+        if(VERBOSE){
           cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
                << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
                << endl;
@@ -1009,7 +973,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL1TriggerVectors.push_back(passMomenta[i]);
       }
-      if(verbose){
+      if(VERBOSE){
         std::cout<<" L1 obj FOUND; current size = "<< allMuL1TriggerVectors.size()<<std::endl;
       }
     }
@@ -1017,7 +981,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL2TriggerVectors.push_back(passMomenta[i]);
       }
-          if(verbose){
+          if(VERBOSE){
         std::cout<<" L2 obj FOUND; current size = "<< allMuL2TriggerVectors.size()<<std::endl;
       }
     }
@@ -1025,7 +989,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL3TriggerVectors_highEff.push_back(passMomenta[i]);
       }
-          if(verbose){
+          if(VERBOSE){
         std::cout<<" L3 (highEff) obj FOUND ; current size = " <<allMuL3TriggerVectors_highEff.size()<<std::endl;
       }
     }
@@ -1033,7 +997,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL3TriggerVectors_lowEff.push_back(passMomenta[i]);
       }
-          if(verbose){
+          if(VERBOSE){
         std::cout<<" L3 (lowEff) obj FOUND ; current size = " <<allMuL3TriggerVectors_lowEff.size()<<std::endl;
       }
     }
@@ -1041,7 +1005,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL3TriggerVectors_highEff.push_back(passMomenta[i]);
       }
-           if(verbose){
+           if(VERBOSE){
         std::cout<<" HLT L3 filter object FOUND; current size = "<<allMuL3TriggerVectors_highEff.size()<<std::endl;
       }
     }
@@ -1049,7 +1013,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuHLTTriggerVectors.push_back(passMomenta[i]);
       }
-            if(verbose){
+            if(VERBOSE){
         std::cout<<" HLT obj FOUND ; current size = " <<allMuHLTTriggerVectors.size()<<std::endl;
       }
     }
@@ -1063,7 +1027,7 @@ bool MuMuGammaRootupler::findTrigger(edm::Handle<edm::TriggerResults> &hltR,
                           std::vector < std::string > & triggerNameFound)
 {
   triggerNameFound.clear();
-  if(verbose){
+  if(VERBOSE){
     std::cout<<" findTrigger()... "<<std::endl;
     if(1==Total_events_analyzed){
       std::cout<<"   Request: "<<std::endl;
@@ -1075,7 +1039,7 @@ bool MuMuGammaRootupler::findTrigger(edm::Handle<edm::TriggerResults> &hltR,
   bool triggerFound = false;
   std::vector<std::string>  hlNames=triggerNames.triggerNames();
   for (uint iT=0; iT<hlNames.size(); ++iT) {
-        if(verbose && 1==Total_events_analyzed){
+        if(VERBOSE && 1==Total_events_analyzed){
       std::cout<<" iT = "<<iT<<" hlNames[iT] = "<<hlNames[iT]<<
         " : wasrun = "<<hltR->wasrun(iT)<<" accept = "<<
         hltR->accept(iT)<<" !error = "<<
@@ -1084,7 +1048,7 @@ bool MuMuGammaRootupler::findTrigger(edm::Handle<edm::TriggerResults> &hltR,
    for(uint imyT = 0;imyT<triggersToCheck.size();++imyT){
       if(string::npos!=hlNames[iT].find(triggersToCheck[imyT]))
          {
-        if(verbose && 1==Total_events_analyzed){
+        if(VERBOSE && 1==Total_events_analyzed){
           std::cout<<" Trigger "<<hlNames[iT]<<" found to be compatible with the requested. "<<std::endl;
         }
         triggerNameFound.push_back(hlNames[iT]);
@@ -1252,7 +1216,7 @@ UInt_t MuMuGammaRootupler::getTriggerBits(const edm::Event& iEvent) {
 
 bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidate dimuonCand) {     
        allTrigMuons.clear(); 
-       if (verbose) cout<< "Trigger mathcing for dimuon candidate"<<endl;
+       if (VERBOSE) cout<< "Trigger mathcing for dimuon candidate"<<endl;
        double reco1_eta = dimuonCand.daughter("muon1")->eta();
        double reco1_phi = dimuonCand.daughter("muon1")->phi();
        double reco1_pt = dimuonCand.daughter("muon1")->pt();
@@ -1261,8 +1225,8 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
        double reco2_phi = dimuonCand.daughter("muon2")->phi();
        double reco2_pt = dimuonCand.daughter("muon2")->pt();
        double reco2_mass = dimuonCand.daughter("muon2")->mass();
-       if (verbose) cout<<"This Dimuon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
-       if (verbose) cout<<"This Dimuon candidate"<<" mu2pt:" <<reco2_pt<<" mu1eta:"<<reco2_eta<<" mu1phi:"<<reco2_phi<<endl;
+       if (VERBOSE) cout<<"This Dimuon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
+       if (VERBOSE) cout<<"This Dimuon candidate"<<" mu2pt:" <<reco2_pt<<" mu1eta:"<<reco2_eta<<" mu1phi:"<<reco2_phi<<endl;
        float dR1 = -9999.;
        float dR2 = -9999.;
        float dR1_minimum = 99;
@@ -1273,16 +1237,16 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
        float dPt2OvP = 999;
        TLorentzVector TempMomenta1;
        TLorentzVector TempMomenta2;
-       if (verbose) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
+       if (VERBOSE) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
        for(uint iTrig =0;iTrig<allMuHLTTriggerVectors.size();++iTrig){
            double hlt_pt = allMuHLTTriggerVectors[iTrig].perp();          
            double hlt_eta = allMuHLTTriggerVectors[iTrig].eta();
            double hlt_phi = allMuHLTTriggerVectors[iTrig].phi();
            double dR1 =  deltaR(reco1_eta,reco1_phi,hlt_eta,hlt_phi);
            double dR2 =  deltaR(reco2_eta,reco2_phi,hlt_eta,hlt_phi);
-           if (verbose) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
-           if (verbose) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
-           if (verbose) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl; 
+           if (VERBOSE) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
+           if (VERBOSE) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
+           if (VERBOSE) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl; 
            if (dR1<dR2)
            {
             if (dR1<dR1_minimum)       
@@ -1292,7 +1256,7 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
             dPt1OvP = dPt1/reco1_pt; 
             if(dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut))      
               { 
-               if (verbose) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
+               if (VERBOSE) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
                TempMomenta1.SetPtEtaPhiM(reco1_pt,reco1_eta,reco1_phi,reco1_mass);
                 } //Found matching to muon 1
                else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR1<<endl;
@@ -1307,7 +1271,7 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
              dPt2OvP = dPt2/reco2_pt;    
              if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut))
                {
-               if (verbose) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
+               if (VERBOSE) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
                TempMomenta2.SetPtEtaPhiM(reco2_pt,reco2_eta,reco2_phi,reco2_mass);
                 }
              else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR2<<endl;
@@ -1322,7 +1286,7 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
         if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut) ){
           allTrigMuons.push_back(TempMomenta2);
            } // filling vector of matched muon 2      
-        if (verbose)
+        if (VERBOSE)
         {
         cout<<" AllTrigMu = "<<allTrigMuons.size()<<endl;
         cout<<" good fourMu  run/lumi/event : "<<run<<"/"<<lumi<<"/"<<event<<std::endl;
@@ -1338,7 +1302,7 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
      }
 bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVector mu4p4) {
        allRestTrigMuons.clear();
-       if (verbose) cout<< "Trigger matching for Rest of muons candidates"<<endl;
+       if (VERBOSE) cout<< "Trigger matching for Rest of muons candidates"<<endl;
        double reco1_eta = mu3p4.Eta();
        double reco1_phi = mu3p4.Phi();
        double reco1_pt = mu3p4.Pt();
@@ -1347,8 +1311,8 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
        double reco2_phi = mu4p4.Phi();
        double reco2_pt = mu4p4.Pt();
        double reco2_mass = mu4p4.M();
-       if (verbose) cout<<"First muon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
-       if (verbose) cout<<"Second muon candidate"<<" mu2pt:" <<reco2_pt<<" mu2eta:"<<reco2_eta<<" mu2phi:"<<reco2_phi<<endl;
+       if (VERBOSE) cout<<"First muon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
+       if (VERBOSE) cout<<"Second muon candidate"<<" mu2pt:" <<reco2_pt<<" mu2eta:"<<reco2_eta<<" mu2phi:"<<reco2_phi<<endl;
        float dR1 = -9999.;
        float dR2 = -9999.;
        float dR1_minimum = 99;
@@ -1359,16 +1323,16 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
        float dPt2OvP = 999;
        TLorentzVector TempMomenta1;
        TLorentzVector TempMomenta2;
-       if (verbose) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
+       if (VERBOSE) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
        for(uint iTrig =0;iTrig<allMuHLTTriggerVectors.size();++iTrig){
            double hlt_pt = allMuHLTTriggerVectors[iTrig].perp();
            double hlt_eta = allMuHLTTriggerVectors[iTrig].eta();
            double hlt_phi = allMuHLTTriggerVectors[iTrig].phi();
            double dR1 =  deltaR(reco1_eta,reco1_phi,hlt_eta,hlt_phi);
            double dR2 =  deltaR(reco2_eta,reco2_phi,hlt_eta,hlt_phi);
-           if (verbose) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
-           if (verbose) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
-           if (verbose) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl;
+           if (VERBOSE) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
+           if (VERBOSE) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
+           if (VERBOSE) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl;
            if (dR1<dR2)
            {
             if (dR1<dR1_minimum)
@@ -1378,7 +1342,7 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
             dPt1OvP = dPt1/reco1_pt;
             if(dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut))
               {
-               if (verbose) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
+               if (VERBOSE) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
                TempMomenta1.SetPtEtaPhiM(reco1_pt,reco1_eta,reco1_phi,reco1_mass);
                 } //Found matching to muon 1
                else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR1<<endl;
@@ -1393,7 +1357,7 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
              dPt2OvP = dPt2/reco2_pt;
              if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut))
                {
-               if (verbose) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
+               if (VERBOSE) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
                TempMomenta2.SetPtEtaPhiM(reco2_pt,reco2_eta,reco2_phi,reco2_mass);
                 }
              else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR2<<endl;
@@ -1408,7 +1372,7 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
         if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut) ){
           allRestTrigMuons.push_back(TempMomenta2);
            } // filling vector of matched muon 2      
-        if (verbose)
+        if (VERBOSE)
         {
         cout<<" All Rest Trigger matched muons size = "<<allRestTrigMuons.size()<<endl;
         cout<<" run/lumi/event : "<<run<<"/"<<lumi<<"/"<<event<<std::endl;
@@ -1463,7 +1427,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 
       if(int(iEvent.id().run())!=runNumber){
       runNumber = iEvent.id().run();
-      if(verbose){
+      if(VERBOSE){
         std::cout<<" New run : "<<iEvent.id().run()<<std::endl;
        }
     const edm::Run * iRun_c = &iEvent.getRun();
@@ -1806,13 +1770,13 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
   allMuL3TriggerVectors_lowEff.clear();
   allMuL3TriggerVectors_highEff.clear();
   allMuHLTTriggerVectors.clear();
-  if (verbose) cout<<"triggersFoundToApply.size()"<<triggersFoundToApply.size()<<endl;
+  if (VERBOSE) cout<<"triggersFoundToApply.size()"<<triggersFoundToApply.size()<<endl;
   for(unsigned int iTrig=0;iTrig<triggersFoundToApply.size();++iTrig){
     lastTriggerModule = -1;
-    if (verbose) cout<<"triggersFoundToApply.at(iTrig)"<<triggersFoundToApply.at(iTrig)<<endl;
+    if (VERBOSE) cout<<"triggersFoundToApply.at(iTrig)"<<triggersFoundToApply.at(iTrig)<<endl;
     analyzeTrigger(hltR, hltE, triggersFoundToApply.at(iTrig));
                  }
-         if (verbose)cout<<"Trigger analyzed Finished"<<endl;
+         if (VERBOSE)cout<<"Trigger analyzed Finished"<<endl;
 	// Pruned particles are the one containing "important" stuff
 	edm::Handle<reco::GenParticleCollection> pruned;
 	iEvent.getByToken(genCands_, pruned);
@@ -1933,7 +1897,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
         bool dimuon_trigger_matched=false;
 	float bestYMass = 1000;
 	pat::CompositeCandidate DimuonCand_bestYMass;
-        if (verbose) cout<<"dimuonCand size: "<<dimuons->size()<<endl;
+        if (VERBOSE) cout<<"dimuonCand size: "<<dimuons->size()<<endl;
 	if ( ! OnlyGen_ 
 			&& dimuons.isValid() && dimuons->size() > 0) {
 		for(pat::CompositeCandidateCollection::const_iterator dimuonCand=dimuons->begin();dimuonCand!= dimuons->end(); ++dimuonCand)
@@ -1942,7 +1906,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 			if (dimuonCand->daughter("muon1")->charge() == dimuonCand->daughter("muon2")->charge() ) continue;
 			if (dimuonCand->daughter("muon1")->pt()<2.0 || dimuonCand->daughter("muon2")->pt()<2.0 ) continue;
 			if (fabs(dimuonCand->daughter("muon1")->eta())>2.4|| fabs(dimuonCand->daughter("muon2")->eta())>2.4) continue;
-                        if (verbose) cout<<"This dimuonCand passed pt, eta, charge cuts"<<endl;
+                        if (VERBOSE) cout<<"This dimuonCand passed pt, eta, charge cuts"<<endl;
 			//dimuon refit. 
 			//Here we use the KinematicParticleVertexFitter with muon mass. But in the Onia2MuMu skim, it was just KalmanVertexFitter. 
 			//Fitted Vertex from both methods are the same (dimuonCand->userData<reco::Vertex>("commonVertex")->z() == mumu_vFit_vertex_noMC->position().z()), 
@@ -1978,7 +1942,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 			RefCountedKinematicVertex mumu_vFit_vertex_noMC;
 
 			if (!(mumuVertexFitTree->isValid())) continue;
-                        if (verbose) cout<<"dimuonCand have valid vertex"<<endl;
+                        if (VERBOSE) cout<<"dimuonCand have valid vertex"<<endl;
 			mumuVertexFitTree->movePointerToTheTop();
 			mumu_vFit_noMC = mumuVertexFitTree->currentParticle();
 			mumu_vFit_vertex_noMC = mumuVertexFitTree->currentDecayVertex();
@@ -2196,7 +2160,7 @@ void  MuMuGammaRootupler::fillUpsilonBestMass(RefCountedKinematicTree mumuVertex
 
 // ------------ method called once each job just before starting event loop  ------------
 void MuMuGammaRootupler::beginJob() {
-if (verbose)
+if (VERBOSE)
 {
 cout<<"The job Begins"<<endl;
 }
@@ -2205,7 +2169,7 @@ cout<<"The job Begins"<<endl;
 // ------------ method called once each job just after ending the event loop  ------------
 void MuMuGammaRootupler::endJob() {
 
-if (verbose)
+if (VERBOSE)
 {
 cout <<"Job End"<<endl;
 cout<<"Total_events_analyzed: "<<Total_events_analyzed<<endl;
@@ -2220,18 +2184,18 @@ cout<<"Total_events_dimuon_trg_matched: "<<Total_events_dimuon_trg_matched<<endl
 // ------------ method called when ending the processing of a run  ------------
 void MuMuGammaRootupler::beginRun(edm::Run & iRun, edm::EventSetup const& iSetup) {
 
-  if(verbose){
+  if(VERBOSE){
     cout<<" New run..."<<endl;
   }
   //--- m_l1GtUtils.getL1GtRunCache(run, iSetup, true, false);
   bool hltConfigChanged;
   bool test = hltConfig_.init(iRun, iSetup, hltName_, hltConfigChanged);
   if (hltConfig_.init(iRun, iSetup, hltName_, hltConfigChanged)) {
-    if(verbose){
+    if(VERBOSE){
       std::cout<<" hltConfig_.size() = "<<hltConfig_.size()<<std::endl;
     }
     // check if trigger name in (new) config
-    if(verbose){
+    if(VERBOSE){
       if (triggerName_!="@") { // "@" means: analyze all triggers in config
         const unsigned int n(hltConfig_.size());
         const unsigned int triggerIndex(hltConfig_.triggerIndex(triggerName_));
