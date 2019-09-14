@@ -86,7 +86,7 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 
 	private:
 		UInt_t getTriggerBits(const edm::Event &);
-                bool TriggerMatch(bool TriggerPassed, pat::CompositeCandidate dimuonCand);
+                bool TriggerMatch(pat::CompositeCandidate dimuonCand);
                 bool TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVector mu4p4);
                 bool findTrigger(edm::Handle<edm::TriggerResults> &hltR,
                                  std::vector < std::string > & triggersToCheck,
@@ -147,13 +147,11 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 
 		TH1F* myDimuonMass_all;
  		TH1F* myY1SFitMass_all;
-
-
                 int Total_events_analyzed;
-                int Total_events_analyzed_triggered;
-                int Total_events_dimuon;
-                int Total_events_dimuon_trg_matched;
-                int nEventsAnalyzed;
+	        int Total_events_analyzed_triggered;
+	        int Total_events_dimuon;
+	        int Total_events_dimuon_trg_matched;
+                int Total_events_Fourmuon;
 		UInt_t run;
 		UInt_t lumi;
 		UInt_t event;
@@ -325,6 +323,43 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		std::vector<Int_t> mu3_pdgID;
 		std::vector<Int_t> mu4_pdgID;
 
+		/*
+			std::vector<Float_t> fourMuFit_Mass_allComb;
+			Float_t fourMuFit_Mass;
+			Float_t fourMuFit_MassErr;
+			Float_t fourMuFit_VtxX;
+			Float_t fourMuFit_VtxY;
+			Float_t fourMuFit_VtxZ;
+			Float_t fourMuFit_VtxProb;
+			Float_t fourMuFit_Chi2;
+			Int_t fourMuFit_ndof;
+			TLorentzVector fourMuFit_p4;
+			Int_t mu3Charge;
+			Int_t mu4Charge;
+			Float_t mu3_d0;
+			Float_t mu4_d0;
+			Float_t mu3_d0err;
+			Float_t mu4_d0err;
+			Float_t mu3_dz;
+			Float_t mu4_dz;
+			Float_t mu3_dzerr;
+			Float_t mu4_dzerr;
+			TLorentzVector fourMuFit_mu1p4;
+			TLorentzVector fourMuFit_mu2p4;
+			TLorentzVector fourMuFit_mu3p4;
+			TLorentzVector fourMuFit_mu4p4;
+			TLorentzVector mu3_p4;
+			TLorentzVector mu4_p4;
+			Int_t mu1_Tight;
+			Int_t mu2_Tight;
+			Int_t mu3_Tight;
+			Int_t mu4_Tight;
+			Int_t mu3_pdgID;
+			Int_t mu4_pdgID;
+			std::vector<pat::CompositeCandidate> upsilonMuons;
+			std::vector<pat::Muon> theRestMuons;
+			*/
+
 		TLorentzVector dimuon_p4_bestYMass;
 		TLorentzVector mu1_p4_bestYMass;
 		TLorentzVector mu2_p4_bestYMass;
@@ -417,7 +452,7 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
                 std::string   triggerName_;
                 std::string hlTriggerSummaryAOD_; 
                 edm::TriggerNames triggerNames;
-                bool VERBOSE;
+                bool verbose;
                 float trg_Match_dR_cut, trg_Match_dP_cut,trg_Match_dP_ratio_cut; 
                 std::vector<std::string> triggerList;
                 bool checkTrigger;
@@ -445,40 +480,42 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		edm::EDGetTokenT<reco::GenParticleCollection> genCands_;
 		edm::EDGetTokenT<pat::PackedGenParticleCollection> packCands_;
 };
+
 //
 // constructors and destructor
 //
-        MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
+MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
 	dimuon_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter< edm::InputTag>("dimuons"))),
 	conversion_Label(consumes<pat::CompositeCandidateCollection>(iConfig.getParameter< edm::InputTag>("conversions"))),
 	primaryVertices_Label(consumes<reco::VertexCollection>(iConfig.getParameter< edm::InputTag>("primaryVertices"))),
 	bs_Label(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("offlineBeamSpot"))),
-	muon_Label(consumes<edm::View<pat::muon>>(iConfig.getParameter< edm::InputTag>("muons"))),
+	muon_Label(consumes<edm::View<pat::Muon>>(iConfig.getParameter< edm::InputTag>("muons"))),
 	triggerResultsTok_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("TriggerResults"))),
-        triggerEventTok_(consumes<trigger::TriggerEvent>(iConfig.getParameter<edm::InputTag>("TriggerSummaryAOD")),
+        triggerEventTok_(consumes<trigger::TriggerEvent>(iConfig.getParameter<edm::InputTag>("TriggerSummaryAOD"))),
 	pdgid_(iConfig.getParameter<uint32_t>("onia_pdgid")),
 	OniaMassCuts_(iConfig.getParameter<std::vector<double>>("onia_mass_cuts")),
 	isMC_(iConfig.getParameter<bool>("isMC")),
-        istriggermatch_(iConfig.getParameter<bool>("triggermatch")),
+        isTriggerMatch_(iConfig.getParameter<bool>("TriggerMatch")),
 	OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
 	OnlyGen_(iConfig.getParameter<bool>("OnlyGen")),
 	upsilon_mass_(iConfig.getParameter<double>("upsilon_mass")),
 	triggerCuts_(iConfig.getParameter<uint32_t>("triggerCuts")),
 	best4muonCand_(iConfig.getParameter<bool>("best4muonCand")),
-        VERBOSE(iConfig.getUntrackedParameter<bool>("VERBOSE",false)),
-        TRG_Match_DR_cut(iConfig.getParameter<double>("TRG_Match_DR")),
-        Trg_Match_dD_cut(iConfig.getParameter<double>("Trg_Match_dD")),
-        Trg_Match_dD_ratio_cut(iConfig.getParameter<double>("Trg_Match_dD_ratio")),
+        verbose(iConfig.getUntrackedParameter<bool>("VERBOSE",false)),
+        trg_Match_dR_cut(iConfig.getParameter<double>("TRG_Match_DR")),
+        trg_Match_dP_cut(iConfig.getParameter<double>("TRG_Match_DP")),
+        trg_Match_dP_ratio_cut(iConfig.getParameter<double>("TRG_Match_DP_ratio")),
         triggerList(iConfig.getUntrackedParameter<std::vector<std::string>>("triggerList"))
 {
-	edm::service < TFileService > fs;
+	edm::Service < TFileService > fs;
 	onia_tree = fs->make < TTree > ("oniaTree", "Tree of MuMuGamma");
 	gen_tree = fs->make < TTree > ("genTree", "Tree of genCand");
         Total_events_analyzed = 0;
-        Total_events_analyzed_triggered = 0 ;
-        Total_events_dimuon= 0;
-        Total_events_dimuon_trg_matched = 0;
-        Total_event_4mu = 0;
+	Total_events_analyzed_triggered = 0 ;
+	Total_events_dimuon= 0;
+	Total_events_dimuon_trg_matched = 0;
+	Total_events_Fourmuon = 0;
+
         runNumber = -99;
         checkTrigger =true;
         hltName_ = "HLT";
@@ -854,12 +891,12 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
 
   const unsigned int n(hltConfig_.size());
   const unsigned int triggerIndex(hltConfig_.triggerIndex(triggerName));
-  if(VERBOSE){
+  if(verbose){
     std::cout<<" n = "<<n<<" triggerIndex = "<<triggerIndex<<" size = "<<hltConfig_.size()<<std::endl;
     std::cout<<" Analyze triggerName : "<<triggerName<<std::endl;
   }
   if (triggerIndex>=n) {
-    if(VERBOSE){
+    if(verbose){
       cout << "FourmuonAnalyzer4::analyzeTrigger: path "
            << triggerName << " - not found!" << endl;
     }
@@ -869,7 +906,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
   const unsigned int m(hltConfig_.size(triggerIndex));
   const vector<string>& moduleLabels(hltConfig_.moduleLabels(triggerIndex));
   lastTriggerModule = moduleIndex;
-  if(VERBOSE){
+  if(verbose){
     cout << "FourmuonAnalyzer::analyzeTrigger: path "
          << triggerName << " [" << triggerIndex << "]" << endl;
          
@@ -895,11 +932,11 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
     const string  moduleType(hltConfig_.moduleType(moduleLabel));
     // check whether the module is packed up in TriggerEvent product
         const unsigned int filterIndex(hltE->filterIndex(InputTag(moduleLabel,"",hltName_)));
-    if(VERBOSE){
+    if(verbose){
       std::cout<<" j = "<<j<<" modLabel/moduleType = "<<moduleLabel<<"/"<<moduleType<<" filterIndex = "<<filterIndex<<" sizeF = "<<hltE->sizeFilters()<<std::endl;
     }
     if (filterIndex<hltE->sizeFilters()) { 
-          if(VERBOSE){
+          if(verbose){
         cout << " 'L3' (or 'L1', 'L2') filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
       }
       const Vids& VIDS (hltE->filterIds(filterIndex));
@@ -908,7 +945,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       const size_type nK(KEYS.size());
       assert(nI==nK);
       const size_type n(max(nI,nK));
-      if(VERBOSE){
+      if(verbose){
         cout << "   " << n  << " accepted 'L3' (or 'L1', 'L2') objects found: " << endl;
       }
       const TriggerObjectCollection& TOC(hltE->getObjects());
@@ -918,51 +955,51 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
         }
         const TriggerObject& TO(TOC[KEYS[i]]);
         GlobalVector momentumT0(TO.px(),TO.py(),TO.pz());
-        if(VERBOSE){
+        if(verbose){
           std::cout<<" i = "<<i<<" moduleLabel/moduleType : "<<moduleLabel<<"/"<<moduleType<<std::endl;
         }
         if(13==TO.id() || -13==TO.id() || 0==TO.id()){//TO.id() --> L1 Mu is always 0 (?)
-          if(VERBOSE){
+          if(verbose){
             std::cout<<" current moduleType = "<<moduleType<<std::endl;
           }  
          if("HLTL1TSeed" == moduleType && "hltL1sTripleMu0orTripleMu500" == moduleLabel){ // HLT_Dimuon0_Jpsi_Muon_v5
             passMomenta.push_back(momentumT0);
-            if(VERBOSE){
+            if(verbose){
               std::cout<<" L1 object found"<<std::endl;
             }
           }
           else if("HLTMuonL2FromL1TPreFilter"==moduleType){//HLT_Dimuon0_Jpsi_Muon_v5
             passMomenta.push_back(momentumT0);
-            if(VERBOSE){
+            if(verbose){
               std::cout<<" L2 object found"<<std::endl;
             }
           }
           else if("HLTMuonL3PreFilter"==moduleType || "HLTMuonIsoFilter"==moduleType){
             passMomenta.push_back(momentumT0);
-            if(VERBOSE){
+            if(verbose){
               std::cout<<" L3 (highEff) object found"<<std::endl;
             }
           }
           else if("HLTDiMuonGlbTrkFilter"==moduleType){
             passMomenta.push_back(momentumT0);
-            if(VERBOSE){
+            if(verbose){
               std::cout<<" L3 (lowEff) object found"<<std::endl;
             }
           }
           else if("HLT2MuonMuonDZ"==moduleType || "HLTMuonIsoFilter"==moduleType || ("HLTMuonL3PreFilter"==moduleType)){
             passMomenta.push_back(momentumT0);
-            if(VERBOSE){
+            if(verbose){
               std::cout<<" HLT object found"<<std::endl;
             }
           }
                    else if("HLTMuonDimuonL3Filter"==moduleType){//HLT_Dimuon0_Jpsi_Muon_v5
             passMomenta.push_back(momentumT0);
-            if(VERBOSE){
+            if(verbose){
               std::cout<<" HLT L3 filter object found"<<std::endl;
             }
           }
         }
-        if(VERBOSE){
+        if(verbose){
           cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
                << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
                << endl;
@@ -973,7 +1010,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL1TriggerVectors.push_back(passMomenta[i]);
       }
-      if(VERBOSE){
+      if(verbose){
         std::cout<<" L1 obj FOUND; current size = "<< allMuL1TriggerVectors.size()<<std::endl;
       }
     }
@@ -981,7 +1018,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL2TriggerVectors.push_back(passMomenta[i]);
       }
-          if(VERBOSE){
+          if(verbose){
         std::cout<<" L2 obj FOUND; current size = "<< allMuL2TriggerVectors.size()<<std::endl;
       }
     }
@@ -989,7 +1026,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL3TriggerVectors_highEff.push_back(passMomenta[i]);
       }
-          if(VERBOSE){
+          if(verbose){
         std::cout<<" L3 (highEff) obj FOUND ; current size = " <<allMuL3TriggerVectors_highEff.size()<<std::endl;
       }
     }
@@ -997,7 +1034,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL3TriggerVectors_lowEff.push_back(passMomenta[i]);
       }
-          if(VERBOSE){
+          if(verbose){
         std::cout<<" L3 (lowEff) obj FOUND ; current size = " <<allMuL3TriggerVectors_lowEff.size()<<std::endl;
       }
     }
@@ -1005,7 +1042,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuL3TriggerVectors_highEff.push_back(passMomenta[i]);
       }
-           if(VERBOSE){
+           if(verbose){
         std::cout<<" HLT L3 filter object FOUND; current size = "<<allMuL3TriggerVectors_highEff.size()<<std::endl;
       }
     }
@@ -1013,7 +1050,7 @@ void MuMuGammaRootupler::analyzeTrigger(edm::Handle<edm::TriggerResults> &hltR,
       for(unsigned int i=0;i<passMomenta.size();++i){
         allMuHLTTriggerVectors.push_back(passMomenta[i]);
       }
-            if(VERBOSE){
+            if(verbose){
         std::cout<<" HLT obj FOUND ; current size = " <<allMuHLTTriggerVectors.size()<<std::endl;
       }
     }
@@ -1027,7 +1064,7 @@ bool MuMuGammaRootupler::findTrigger(edm::Handle<edm::TriggerResults> &hltR,
                           std::vector < std::string > & triggerNameFound)
 {
   triggerNameFound.clear();
-  if(VERBOSE){
+  if(verbose){
     std::cout<<" findTrigger()... "<<std::endl;
     if(1==Total_events_analyzed){
       std::cout<<"   Request: "<<std::endl;
@@ -1039,7 +1076,7 @@ bool MuMuGammaRootupler::findTrigger(edm::Handle<edm::TriggerResults> &hltR,
   bool triggerFound = false;
   std::vector<std::string>  hlNames=triggerNames.triggerNames();
   for (uint iT=0; iT<hlNames.size(); ++iT) {
-        if(VERBOSE && 1==Total_events_analyzed){
+        if(verbose && 1==Total_events_analyzed){
       std::cout<<" iT = "<<iT<<" hlNames[iT] = "<<hlNames[iT]<<
         " : wasrun = "<<hltR->wasrun(iT)<<" accept = "<<
         hltR->accept(iT)<<" !error = "<<
@@ -1048,7 +1085,7 @@ bool MuMuGammaRootupler::findTrigger(edm::Handle<edm::TriggerResults> &hltR,
    for(uint imyT = 0;imyT<triggersToCheck.size();++imyT){
       if(string::npos!=hlNames[iT].find(triggersToCheck[imyT]))
          {
-        if(VERBOSE && 1==Total_events_analyzed){
+        if(verbose && 1==Total_events_analyzed){
           std::cout<<" Trigger "<<hlNames[iT]<<" found to be compatible with the requested. "<<std::endl;
         }
         triggerNameFound.push_back(hlNames[iT]);
@@ -1080,7 +1117,7 @@ UInt_t MuMuGammaRootupler::getTriggerBits(const edm::Event& iEvent) {
 		const edm::TriggerNames & TheTriggerNames = iEvent.triggerNames(*triggerResults_handle);
 		std::vector <unsigned int> bits_0, bits_1, bits_2, bits_3, bits_4, bits_5, bits_6, bits_7, bits_8, bits_9;
 		for ( int version = 1; version<20; version ++ ) {
-			std::stringstream ss0,ss1,ss2,ss3,ss4,ss5,ss6,ss7,ss8,ss9,ss10;
+			std::stringstream ss0,ss1,ss2,ss3,ss4,ss5,ss6,ss7,ss8,ss9;
 			ss0<<"HLT_Dimuon25_Jpsi_v"<<version;
 			//ss0<<"HLT_Dimuon16_Jpsi_v"<<version;
 			bits_0.push_back(TheTriggerNames.triggerIndex( edm::InputTag(ss0.str()).label().c_str()));
@@ -1214,9 +1251,9 @@ UInt_t MuMuGammaRootupler::getTriggerBits(const edm::Event& iEvent) {
 	return itrigger;
 }
 
-bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidate dimuonCand) {     
+bool MuMuGammaRootupler::TriggerMatch(pat::CompositeCandidate dimuonCand) {     
        allTrigMuons.clear(); 
-       if (VERBOSE) cout<< "Trigger mathcing for dimuon candidate"<<endl;
+       if (verbose) cout<< "Trigger mathcing for dimuon candidate"<<endl;
        double reco1_eta = dimuonCand.daughter("muon1")->eta();
        double reco1_phi = dimuonCand.daughter("muon1")->phi();
        double reco1_pt = dimuonCand.daughter("muon1")->pt();
@@ -1225,8 +1262,8 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
        double reco2_phi = dimuonCand.daughter("muon2")->phi();
        double reco2_pt = dimuonCand.daughter("muon2")->pt();
        double reco2_mass = dimuonCand.daughter("muon2")->mass();
-       if (VERBOSE) cout<<"This Dimuon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
-       if (VERBOSE) cout<<"This Dimuon candidate"<<" mu2pt:" <<reco2_pt<<" mu1eta:"<<reco2_eta<<" mu1phi:"<<reco2_phi<<endl;
+       if (verbose) cout<<"This Dimuon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
+       if (verbose) cout<<"This Dimuon candidate"<<" mu2pt:" <<reco2_pt<<" mu1eta:"<<reco2_eta<<" mu1phi:"<<reco2_phi<<endl;
        float dR1 = -9999.;
        float dR2 = -9999.;
        float dR1_minimum = 99;
@@ -1237,26 +1274,26 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
        float dPt2OvP = 999;
        TLorentzVector TempMomenta1;
        TLorentzVector TempMomenta2;
-       if (VERBOSE) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
+       if (verbose) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
        for(uint iTrig =0;iTrig<allMuHLTTriggerVectors.size();++iTrig){
            double hlt_pt = allMuHLTTriggerVectors[iTrig].perp();          
            double hlt_eta = allMuHLTTriggerVectors[iTrig].eta();
            double hlt_phi = allMuHLTTriggerVectors[iTrig].phi();
            double dR1 =  deltaR(reco1_eta,reco1_phi,hlt_eta,hlt_phi);
            double dR2 =  deltaR(reco2_eta,reco2_phi,hlt_eta,hlt_phi);
-           if (VERBOSE) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
-           if (VERBOSE) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
-           if (VERBOSE) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl; 
+           if (verbose) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
+           if (verbose) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
+           if (verbose) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl; 
            if (dR1<dR2)
            {
             if (dR1<dR1_minimum)       
             {
             dR1_minimum = dR1;   
-            dPt1 = std::abs(reco1_pt - hlt_pt);
-            dPt1OvP = dPt1/reco1_pt; 
-            if(dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut))      
+            dPt1 = std::abs(reco1_pt - hlt_pt); 
+	    dPt1OvP = dPt1/reco1_pt; 
+	    if(dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut)) 
               { 
-               if (VERBOSE) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
+               if (verbose) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
                TempMomenta1.SetPtEtaPhiM(reco1_pt,reco1_eta,reco1_phi,reco1_mass);
                 } //Found matching to muon 1
                else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR1<<endl;
@@ -1267,11 +1304,11 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
              if (dR2<dR2_minimum)
               {
              dR2_minimum = dR2;
-             dPt2 = std::abs(reco2_pt - hlt_pt);
+             dPt2 = std::abs(reco2_pt - hlt_pt);   
              dPt2OvP = dPt2/reco2_pt;    
-             if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut))
+	     if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut))
                {
-               if (VERBOSE) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
+               if (verbose) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
                TempMomenta2.SetPtEtaPhiM(reco2_pt,reco2_eta,reco2_phi,reco2_mass);
                 }
              else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR2<<endl;
@@ -1280,21 +1317,18 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
          } // loop over all HLT objects
         dR1 = dR1_minimum;
         dR2 = dR2_minimum;
-        if( dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut) ){
+        if( dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut)){
           allTrigMuons.push_back(TempMomenta1);
            } // filling vector of matched muon 1
         if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut) ){
           allTrigMuons.push_back(TempMomenta2);
            } // filling vector of matched muon 2      
-        if (VERBOSE)
+        if (verbose)
         {
         cout<<" AllTrigMu = "<<allTrigMuons.size()<<endl;
         cout<<" good fourMu  run/lumi/event : "<<run<<"/"<<lumi<<"/"<<event<<std::endl;
-        if(TriggerPassed){
-           cout<<"   Trigger passed "<<endl;
         if(allTrigMuons.size()>=2){
           cout<<"Matching good "<<endl;
-             }
              }
           }
       if (allTrigMuons.size()>=2) return true;
@@ -1302,7 +1336,7 @@ bool MuMuGammaRootupler::TriggerMatch(bool TriggerPassed, pat::CompositeCandidat
      }
 bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVector mu4p4) {
        allRestTrigMuons.clear();
-       if (VERBOSE) cout<< "Trigger matching for Rest of muons candidates"<<endl;
+       if (verbose) cout<< "Trigger matching for Rest of muons candidates"<<endl;
        double reco1_eta = mu3p4.Eta();
        double reco1_phi = mu3p4.Phi();
        double reco1_pt = mu3p4.Pt();
@@ -1311,8 +1345,8 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
        double reco2_phi = mu4p4.Phi();
        double reco2_pt = mu4p4.Pt();
        double reco2_mass = mu4p4.M();
-       if (VERBOSE) cout<<"First muon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
-       if (VERBOSE) cout<<"Second muon candidate"<<" mu2pt:" <<reco2_pt<<" mu2eta:"<<reco2_eta<<" mu2phi:"<<reco2_phi<<endl;
+       if (verbose) cout<<"First muon candidate"<<" mu1pt:" <<reco1_pt<<" mu1eta:"<<reco1_eta<<" mu1phi:"<<reco1_phi<<endl;
+       if (verbose) cout<<"Second muon candidate"<<" mu2pt:" <<reco2_pt<<" mu2eta:"<<reco2_eta<<" mu2phi:"<<reco2_phi<<endl;
        float dR1 = -9999.;
        float dR2 = -9999.;
        float dR1_minimum = 99;
@@ -1323,16 +1357,16 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
        float dPt2OvP = 999;
        TLorentzVector TempMomenta1;
        TLorentzVector TempMomenta2;
-       if (VERBOSE) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
+       if (verbose) cout<<"allMuHLTTriggerVectors.size():"<<allMuHLTTriggerVectors.size()<<endl;
        for(uint iTrig =0;iTrig<allMuHLTTriggerVectors.size();++iTrig){
            double hlt_pt = allMuHLTTriggerVectors[iTrig].perp();
            double hlt_eta = allMuHLTTriggerVectors[iTrig].eta();
            double hlt_phi = allMuHLTTriggerVectors[iTrig].phi();
            double dR1 =  deltaR(reco1_eta,reco1_phi,hlt_eta,hlt_phi);
            double dR2 =  deltaR(reco2_eta,reco2_phi,hlt_eta,hlt_phi);
-           if (VERBOSE) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
-           if (VERBOSE) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
-           if (VERBOSE) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl;
+           if (verbose) cout<<"iTrig:"<<iTrig<<" iTrigpT:"<<hlt_pt<<" hlt_phi:"<<hlt_phi<<endl;
+           if (verbose) cout<<"dR1:" <<dR1<<" dPt1:"<<dPt1<<endl;
+           if (verbose) cout<<"dR2:" <<dR2<<" dPt2:"<<dPt2<<endl;
            if (dR1<dR2)
            {
             if (dR1<dR1_minimum)
@@ -1342,7 +1376,7 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
             dPt1OvP = dPt1/reco1_pt;
             if(dR1 < trg_Match_dR_cut && (dPt1 < trg_Match_dP_cut ||  dPt1OvP < trg_Match_dP_ratio_cut))
               {
-               if (VERBOSE) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
+               if (verbose) cout<<"Matching L3 sucessfull muPt1 = " <<reco1_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR1<<endl;
                TempMomenta1.SetPtEtaPhiM(reco1_pt,reco1_eta,reco1_phi,reco1_mass);
                 } //Found matching to muon 1
                else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR1<<endl;
@@ -1357,7 +1391,7 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
              dPt2OvP = dPt2/reco2_pt;
              if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut))
                {
-               if (VERBOSE) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
+               if (verbose) cout<<"Matching L3 sucessfull muPt2 = " <<reco2_pt<<" trigPt = "<<hlt_pt<<" dR = "<<dR2<<endl;
                TempMomenta2.SetPtEtaPhiM(reco2_pt,reco2_eta,reco2_phi,reco2_mass);
                 }
              else cout<<"Matching failed -> iTrig = "<< hlt_pt<<" eta = "<<hlt_eta<<" phi = "<< hlt_phi<<" dR ="<<dR2<<endl;
@@ -1372,7 +1406,7 @@ bool MuMuGammaRootupler::TriggerMatch_restMuons(TLorentzVector mu3p4, TLorentzVe
         if(dR2 < trg_Match_dR_cut && (dPt2 < trg_Match_dP_cut ||  dPt2OvP < trg_Match_dP_ratio_cut) ){
           allRestTrigMuons.push_back(TempMomenta2);
            } // filling vector of matched muon 2      
-        if (VERBOSE)
+        if (verbose)
         {
         cout<<" All Rest Trigger matched muons size = "<<allRestTrigMuons.size()<<endl;
         cout<<" run/lumi/event : "<<run<<"/"<<lumi<<"/"<<event<<std::endl;
@@ -1423,11 +1457,10 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	  const reco::PFCandidateCollection pfphotons = selectPFPhotons(*pfcandidates);
 	  */
          ++Total_events_analyzed;
-         
 
       if(int(iEvent.id().run())!=runNumber){
       runNumber = iEvent.id().run();
-      if(VERBOSE){
+      if(verbose){
         std::cout<<" New run : "<<iEvent.id().run()<<std::endl;
        }
     const edm::Run * iRun_c = &iEvent.getRun();
@@ -1446,8 +1479,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
       bool theTriggerPassed = findTrigger(hltR, triggerList, triggersFoundToApply);
       if (theTriggerPassed){
          cout<<" theTriggerPassed = "<<theTriggerPassed<<" checkTrigger = "<<checkTrigger<<" trigFound = "<<triggersFoundToApply.size()<<endl;
-                ++Total_events_analyzed_triggered;
-
+         ++Total_events_analyzed_triggered;
         }
 //
 	if (!OnlyGen_) {
@@ -1770,13 +1802,14 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
   allMuL3TriggerVectors_lowEff.clear();
   allMuL3TriggerVectors_highEff.clear();
   allMuHLTTriggerVectors.clear();
-  if (VERBOSE) cout<<"triggersFoundToApply.size()"<<triggersFoundToApply.size()<<endl;
+  if (verbose) cout<<"triggersFoundToApply.size()"<<triggersFoundToApply.size()<<endl;
   for(unsigned int iTrig=0;iTrig<triggersFoundToApply.size();++iTrig){
     lastTriggerModule = -1;
-    if (VERBOSE) cout<<"triggersFoundToApply.at(iTrig)"<<triggersFoundToApply.at(iTrig)<<endl;
+    if (verbose) cout<<"triggersFoundToApply.at(iTrig)"<<triggersFoundToApply.at(iTrig)<<endl;
     analyzeTrigger(hltR, hltE, triggersFoundToApply.at(iTrig));
                  }
-         if (VERBOSE)cout<<"Trigger analyzed Finished"<<endl;
+         if (verbose)cout<<"Trigger analyzed Finished"<<endl;
+
 	// Pruned particles are the one containing "important" stuff
 	edm::Handle<reco::GenParticleCollection> pruned;
 	iEvent.getByToken(genCands_, pruned);
@@ -1894,19 +1927,20 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 
 	int nGoodUpsilonCand = 0;
         int nTriggeredUpsilonCand = 0;
+        int nTriggeredFourMuonCand = 0;
         bool dimuon_trigger_matched=false;
 	float bestYMass = 1000;
 	pat::CompositeCandidate DimuonCand_bestYMass;
-        if (VERBOSE) cout<<"dimuonCand size: "<<dimuons->size()<<endl;
+        if (verbose) cout<<"dimuonCand size: "<<dimuons->size()<<endl;
 	if ( ! OnlyGen_ 
-			&& dimuons.isValid() && dimuons->size() > 0) {
+			&& dimuons.isValid() && dimuons->size() > 0 && theTriggerPassed) {
 		for(pat::CompositeCandidateCollection::const_iterator dimuonCand=dimuons->begin();dimuonCand!= dimuons->end(); ++dimuonCand)
-		   {
+		{
 			if (dimuonCand->mass() < OniaMassMin_ || dimuonCand->mass() > OniaMassMax_) continue;
 			if (dimuonCand->daughter("muon1")->charge() == dimuonCand->daughter("muon2")->charge() ) continue;
 			if (dimuonCand->daughter("muon1")->pt()<2.0 || dimuonCand->daughter("muon2")->pt()<2.0 ) continue;
 			if (fabs(dimuonCand->daughter("muon1")->eta())>2.4|| fabs(dimuonCand->daughter("muon2")->eta())>2.4) continue;
-                        if (VERBOSE) cout<<"This dimuonCand passed pt, eta, charge cuts"<<endl;
+                        if (verbose) cout<<"This dimuonCand passed pt, eta, charge cuts"<<endl;
 			//dimuon refit. 
 			//Here we use the KinematicParticleVertexFitter with muon mass. But in the Onia2MuMu skim, it was just KalmanVertexFitter. 
 			//Fitted Vertex from both methods are the same (dimuonCand->userData<reco::Vertex>("commonVertex")->z() == mumu_vFit_vertex_noMC->position().z()), 
@@ -1942,22 +1976,26 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 			RefCountedKinematicVertex mumu_vFit_vertex_noMC;
 
 			if (!(mumuVertexFitTree->isValid())) continue;
-                        if (VERBOSE) cout<<"dimuonCand have valid vertex"<<endl;
+                        if (verbose) cout<<"dimuonCand have valid vertex"<<endl;
 			mumuVertexFitTree->movePointerToTheTop();
 			mumu_vFit_noMC = mumuVertexFitTree->currentParticle();
 			mumu_vFit_vertex_noMC = mumuVertexFitTree->currentDecayVertex();
                         pat::CompositeCandidate thisDimuonCand = *dimuonCand;
-                        dimuon_trigger_matched = TriggerMatch(theTriggerPassed,thisDimuonCand);
-                        if (!dimuon_trigger_matched && isTriggerMatch_) continue;
-                        nTriggeredUpsilonCand++;                        
+	                dimuon_trigger_matched = TriggerMatch(thisDimuonCand);
+	                if (!dimuon_trigger_matched && isTriggerMatch_) continue;
+	                ++nTriggeredUpsilonCand;
+                        if (verbose) cout<<"Dimuon candidate has passed the Trigger matching with dimuon mass:"<<mumu_vFit_noMC->currentState().mass()<<endl; 
 			//if (mumu_vFit_noMC->currentState().mass() < 8 || mumu_vFit_noMC->currentState().mass() > 12) continue;
-			if (fabs(mumu_vFit_noMC->currentState().mass()-upsilon_mass_) > (3*1.16*sqrt( mumu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6) ))) continue; 
+			if (fabs(mumu_vFit_noMC->currentState().mass()-upsilon_mass_) > (3*1.16*sqrt( mumu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6) ))) continue;
+                        if (verbose) cout<<"Dimuon mass competible with Upsilon Candidate with vtx Fit:"<<ChiSquaredProbability((double)(mumu_vFit_vertex_noMC->chiSquared()),(double)(mumu_vFit_vertex_noMC->degreesOfFreedom()))<<endl; 
 			if (ChiSquaredProbability((double)(mumu_vFit_vertex_noMC->chiSquared()),(double)(mumu_vFit_vertex_noMC->degreesOfFreedom())) < 0.005) continue;
+                        if (verbose) cout<<"Dimuon candidate pass vertex Fit cut"<<endl;
 			//apply trigger cut: 36 for upsilon, 73 for Jpsi
 			//if ((trigger&triggerCuts_)==0) continue;
 			//if (dimuonCand->pt() < 7) ccontinue; //another method: using mumufit_ instead of dimuon			
 			nGoodUpsilonCand++;
 			fillUpsilonVector(mumuVertexFitTree,thisDimuonCand,bFieldHandle,bs);
+                        if (verbose) cout<<"Filled upsilon candidate"<<nGoodUpsilonCand<<endl;
 			if (nGoodUpsilonCand==1) fillUpsilonBestVertex(mumuVertexFitTree,thisDimuonCand,bFieldHandle,bs);
 			if (best4muonCand_ == false || (best4muonCand_ == true && nGoodUpsilonCand==1)) {
 				/*		//4 muon mix
@@ -1966,6 +2004,7 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 				if (muons_previousEvent.at(muons_previousEvent.size()-3).size() > 0) fourMuonMixFit(thisDimuonCand, muons, muons_previousEvent.at(muons_previousEvent.size()-3), bFieldHandle, bs, thePrimaryV);
 				if (muons_previousEvent.at(muons_previousEvent.size()-3).size() > 0) fourMuonMixFit(thisDimuonCand, muons, muons_previousEvent.at(muons_previousEvent.size()-3), muons_previousEvent.at(muons_previousEvent.size()-2), bFieldHandle, bs, thePrimaryV);}
 				*/		//4 muon fit
+                                
 				fourMuonFit(thisDimuonCand, muons, bFieldHandle, bs, thePrimaryV);
 			}
 
@@ -1977,17 +2016,17 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 				fillUpsilonBestMass(mumuVertexFitTree,DimuonCand_bestYMass,bFieldHandle,bs);
 			}
 		} //end of Upsilon loop
-                if (nTriggeredUpsilonCand >= 1 && theTriggerPassed) ++Total_events_dimuon_trg_matched;
-                if (nTriggeredUpsilonCand == 0 && theTriggerPassed && dimuons->size() > 0 && theTriggerPassed ) cout <<"Trigger Matching fail for run/lumi/event : "<<run<<"/"<<lumi<<"/"<<event<<std::endl;
-                if (nGoodUpsilonCand>=1) ++Total_events_dimuon;
+
 		//if (nGoodUpsilonCand>0 && muons_previousEvent_bestYMass.size() > 0) fourMuonMixFit_bestYMass(DimuonCand_bestYMass, muons, muons_previousEvent_bestYMass, bFieldHandle, bs, thePrimaryV);
 
 		//if (nGoodUpsilonCand>0) fourMuonFit_bestYMass(DimuonCand_bestYMass, muons, bFieldHandle, bs, thePrimaryV);
 	}
+                if (nTriggeredUpsilonCand >= 1 && theTriggerPassed) ++Total_events_dimuon_trg_matched;
+	        if (nGoodUpsilonCand>=1 && theTriggerPassed) ++Total_events_dimuon;
+                if (fourMuFit_Mass_allComb.size()>0) ++Total_events_Fourmuon;
+	        if (nGoodUpsilonCand>0) onia_tree->Fill();
 
-	if (nGoodUpsilonCand>0) onia_tree->Fill();
-
-	}//end run number selection
+	}		//end run number selection
 }
 
 void  MuMuGammaRootupler::fillUpsilonVector(RefCountedKinematicTree mumuVertexFitTree, pat::CompositeCandidate dimuonCand, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs) {
@@ -2160,42 +2199,40 @@ void  MuMuGammaRootupler::fillUpsilonBestMass(RefCountedKinematicTree mumuVertex
 
 // ------------ method called once each job just before starting event loop  ------------
 void MuMuGammaRootupler::beginJob() {
-if (VERBOSE)
-{
-cout<<"The job Begins"<<endl;
-}
+if (verbose)
+	{
+	cout<<"The job Begins"<<endl;
+	}
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void MuMuGammaRootupler::endJob() {
 
-if (VERBOSE)
-{
-cout <<"Job End"<<endl;
-cout<<"Total_events_analyzed: "<<Total_events_analyzed<<endl;
-cout<<"Total_events_analyzed_triggered: "<<Total_events_analyzed_triggered<<endl;
-cout<<"Total_events_dimuon_trg_matched: "<<Total_events_dimuon_trg_matched<<endl;
-//cout<<"Total_events_trimuon_trg_matched: "<<Total_events_trimuon_trg_matched<<endl;
+	if (verbose)
+	{
+	cout <<"Job End"<<endl;
+	cout<<"Total_events_analyzed: "<<Total_events_analyzed<<endl;
+	cout<<"Total_events_analyzed_triggered: "<<Total_events_analyzed_triggered<<endl;
+	cout<<"Total_events_dimuon_trg_matched: "<<Total_events_dimuon_trg_matched<<endl;
+        cout<<"Total_events_Fourmuon: " <<Total_events_Fourmuon<<endl;
+	}
+			
 }
-
-}
-
-
 // ------------ method called when ending the processing of a run  ------------
 void MuMuGammaRootupler::beginRun(edm::Run & iRun, edm::EventSetup const& iSetup) {
 
-  if(VERBOSE){
+  if(verbose){
     cout<<" New run..."<<endl;
   }
   //--- m_l1GtUtils.getL1GtRunCache(run, iSetup, true, false);
   bool hltConfigChanged;
   bool test = hltConfig_.init(iRun, iSetup, hltName_, hltConfigChanged);
   if (hltConfig_.init(iRun, iSetup, hltName_, hltConfigChanged)) {
-    if(VERBOSE){
+    if(verbose){
       std::cout<<" hltConfig_.size() = "<<hltConfig_.size()<<std::endl;
     }
     // check if trigger name in (new) config
-    if(VERBOSE){
+    if(verbose){
       if (triggerName_!="@") { // "@" means: analyze all triggers in config
         const unsigned int n(hltConfig_.size());
         const unsigned int triggerIndex(hltConfig_.triggerIndex(triggerName_));
@@ -2508,10 +2545,9 @@ void MuMuGammaRootupler::fourMuonFit(pat::CompositeCandidate dimuonCand, edm::Ha
 				mu1p4.SetPtEtaPhiM(v1.pt(),v1.eta(),v1.phi(),v1.mass());
 				mu2p4.SetPtEtaPhiM(v2.pt(),v2.eta(),v2.phi(),v2.mass());
 				mu3p4.SetPtEtaPhiM(mu3->pt(), mu3->eta(), mu3->phi(), mu3->mass());
-				mu4p4.SetPtEtaPhiM(mu4->pt(), mu4->eta(), mu4->phi(), mu4->mass());  
+				mu4p4.SetPtEtaPhiM(mu4->pt(), mu4->eta(), mu4->phi(), mu4->mass());   
                                 bool Rest_Muon_trigger_Matched = TriggerMatch_restMuons(mu3p4,mu4p4);
                                 if (!Rest_Muon_trigger_Matched && isTriggerMatch_) continue;
-                                //++Total_events_trimuon_trg_matched;
 				fourMup4 = mu1p4 + mu2p4 + mu3p4 + mu4p4;
 				fourMuFit_Mass_allComb.push_back(fourMup4.M());
 			}
