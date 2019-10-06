@@ -18,11 +18,11 @@ rootuple = cms.EDAnalyzer('MuMuGammaRootupler',
                           VERBOSE = cms.untracked.bool(False),              
                           #VERBOSE = cms.untracked.bool(True), 
                           triggerList = cms.untracked.vstring(
-                                    #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v',       #2018  HLT string
+                                    #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v'       #2018  HLT string
                                     #'HLT_TrimuonOpen_5_3p5_2_Upsilon_Muon_v',  #2018 HLT string
                                     #'HLT_Trimuon2_Upsilon5_Muon_v'            #2017B HLT string
-                                    'HLT_Trimuon5_3p5_2_Upsilon_Muon_v'       #2017 C,D, E and F HLT string
-                                    #'HLT_Dimuon0_Upsilon_Muon_v',             #2016 HLT string 
+                                    #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v'       #2017 C,D, E and F HLT string
+                                    'HLT_Dimuon0_Upsilon_Muon_v',             #2016 HLT string 
                                     #'HLT_Dimuon0_Phi_Barrel_v',               #2016 HLT string 
                                     #'HLT_Dimuon13_Upsilon_v',                 #2016 HLT string 
                                     #'HLT_Dimuon8_Upsilon_Barrel_v',           #2016 HLT string

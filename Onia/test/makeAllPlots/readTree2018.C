@@ -301,9 +301,9 @@ void readTree2018::Loop()
 
 			nCand++;
 
-			//std::array<float, 4> s = {fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i), fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)};
-			//std::sort(s.begin(), s.end());		//sort from small to big
-			//bool pass_trigger_pt = s.at(1) > 2 && s.at(2) > 3.5 && s.at(3) > 5;
+			std::array<float, 4> s = {fourMuFit_mu1Pt->at(i), fourMuFit_mu2Pt->at(i), fourMuFit_mu3Pt->at(i), fourMuFit_mu4Pt->at(i)};
+			std::sort(s.begin(), s.end());		//sort from small to big
+			bool pass_trigger_pt = s.at(1) > 2 && s.at(2) > 3.5 && s.at(3) > 5;
 			//if(pass_trigger_pt == false) std::cout << "mu1Pt = " << fourMuFit_mu1Pt->at(i)  << "mu2Pt = " << fourMuFit_mu2Pt->at(i)  << "mu3Pt = " << fourMuFit_mu3Pt->at(i)  << "mu4Pt = " << fourMuFit_mu4Pt->at(i) << std::endl;
 
 			if (fourMuFit_Mass->at(i)>13 && fourMuFit_Mass->at(i)<23) nVertices_fourmuon->Fill(numPrimaryVertices);
@@ -313,8 +313,8 @@ void readTree2018::Loop()
 					&& (mu3_Medium->at(i) + mu4_Medium->at(i)) >= 2
 					&& mu34.M()< 9.2
 					&& fourMuFit_mu1Pt->at(i) >= muonPtCut[2] && fourMuFit_mu2Pt->at(i) >= muonPtCut[2] && fourMuFit_mu3Pt->at(i) >= muonPtCut[2] && fourMuFit_mu4Pt->at(i) >= muonPtCut[2]
-					//&& pass_trigger_pt
-					//&& fourMuFit_Mass->at(i)>13 && fourMuFit_Mass->at(i)<26
+					&& pass_trigger_pt
+					&& fourMuFit_Mass->at(i)>13 && fourMuFit_Mass->at(i)<26
 				) {
 				mu12mass->Fill(mu12.M());
 				/*if (fabs(mumufit_Mass-9.4603) > (3*1.105*mumufit_MassErr)) {
@@ -417,7 +417,7 @@ void readTree2018::Loop()
 			//for (unsigned k=j; k<j+1000 && k<mu12_p4_vector.size();k++){
 			if (j==k) continue;
 			//if ( fabs(mu12boost_p4_vector[k].Vect().DeltaR( mu12boost_p4_vector[j].Vect())) > 1.5) continue;
-			if ( fabs(mu12_p4_vector[k].Vect().DeltaR( mu12_p4_vector[j].Vect())) > 0.05) continue;
+			if ( fabs(mu12_p4_vector[k].Vect().DeltaR( mu12_p4_vector[j].Vect())) > 0.3) continue;
 			//if ( fabs(mu12_p4_vector[k].Phi() - mu12_p4_vector[j].Phi()) < 0.1) continue;
 			//if ( fabs(mu12_p4_vector[k].Eta() - mu12_p4_vector[j].Eta()) > 0.05 ) continue;
 			//if ( fabs(mu12_p4_vector[k].Phi() - mu12_p4_vector[j].Phi()) > 0.5 ) continue;

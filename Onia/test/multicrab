@@ -84,7 +84,7 @@ def main():
         config.Data.inputDataset = None
         config.Data.inputDBS = 'phys03'
         config.Data.splitting = 'FileBased' #'LumiBased'
-        config.Data.unitsPerJob = 6
+        config.Data.unitsPerJob = 2
         #config.Data.totalUnits = 30
         #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-324209_13TeV_PromptReco_Collisions18_JSON_MuonPhys.txt'
         config.Data.outLFNDirBase = '/store/user/%s/FourMuon_Analysis/NTuples/2018/MuOnia' % (getUsernameFromSiteDB())
