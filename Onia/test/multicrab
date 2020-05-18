@@ -74,20 +74,21 @@ def main():
         config = config()
 
         config.General.requestName = None
-        config.General.workArea = 'crabOutput2018ABC_%s' % (options.crabJobsVersion)
+        config.General.workArea = 'crabOutput2016_%s' % (options.crabJobsVersion)
         config.General.transferOutputs = True
         config.General.transferLogs = True
 
         config.JobType.pluginName = 'Analysis'
-        config.JobType.psetName = 'runMuMuGammaRootupler_Chib_RunABC.py'
+        config.JobType.psetName = 'runMuMuGammaRootupler_Chib.py'
 
         config.Data.inputDataset = None
         config.Data.inputDBS = 'phys03'
         config.Data.splitting = 'FileBased' #'LumiBased'
-        config.Data.unitsPerJob = 6
+        config.Data.unitsPerJob = 2
         #config.Data.totalUnits = 30
         #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-324209_13TeV_PromptReco_Collisions18_JSON_MuonPhys.txt'
-        config.Data.outLFNDirBase = '/store/user/%s/FourMuon_Analysis/NTuples/2018/MuOnia' % (getUsernameFromSiteDB())
+        #config.Data.outLFNDirBase = '/store/user/%s/FourMuon_Analysis/NTuples/2017/DoubleUpsilon/MuOnia_v3' % (getUsernameFromSiteDB())
+        config.Data.outLFNDirBase = '/store/user/muahmad/FourMuon_Analysis/NTuples/2016/DoubleUpsilon/MuOnia_v3'
         config.Data.publication = False
         config.Data.outputDatasetTag = None
         config.Data.ignoreLocality = True
@@ -98,9 +99,12 @@ def main():
 
         # Will submit one task for each of these input datasets.
         inputDatasets = [
-                        '/MuOnia/muahmad-BPHSkim--Run2018A-17Sep2018-v1-224f138ea82e56ef7931d5e9b5604e0c/USER',
-                        '/MuOnia/muahmad-BPHSkim--Run2018B-17Sep2018-v1-224f138ea82e56ef7931d5e9b5604e0c/USER',
-                        '/MuOnia/muahmad-BPHSkim--Run2018C-17Sep2018-v1-224f138ea82e56ef7931d5e9b5604e0c/USER'
+	'/MuOnia/cdozen-BPHSkim--Run2016C-07Aug17-v1-c7090b8b8d234312374028f2f97c4846/USER',
+	'/MuOnia/cdozen-BPHSkim--Run2016D-07Aug17-v1-c7090b8b8d234312374028f2f97c4846/USER',
+	'/MuOnia/cdozen-BPHSkim--Run2016E-07Aug17-v1-c7090b8b8d234312374028f2f97c4846/USER',
+	'/MuOnia/cdozen-BPHSkim--Run2016F-07Aug17-v1-c7090b8b8d234312374028f2f97c4846/USER',
+	'/MuOnia/cdozen-BPHSkim--Run2016G-07Aug17-v2-c7090b8b8d234312374028f2f97c4846/USER',
+	'/MuOnia/cdozen-BPHSkim--Run2016H-07Aug17-v1-c7090b8b8d234312374028f2f97c4846/USER'
                        ]
 
         for inDS in inputDatasets:

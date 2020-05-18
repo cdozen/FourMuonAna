@@ -108,7 +108,8 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		int fourMuonMixFit(pat::CompositeCandidate dimuonCand, edm::Handle< edm::View<pat::Muon> > muons, std::vector<pat::Muon> muons_previous1, std::vector<pat::Muon> muons_previous2, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs, reco::Vertex thePrimaryV);      
 		void fourMuonFit_bestYMass(pat::CompositeCandidate dimuonCand, RefCountedKinematicTree treeupsilon_part1, edm::Handle< edm::View<pat::Muon> > muons, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs, reco::Vertex thePrimaryV);
 		int  fourMuonMixFit_bestYMass(pat::CompositeCandidate dimuonCand, edm::Handle< edm::View<pat::Muon> > muons, std::vector<pat::Muon> muons_previous, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs, reco::Vertex thePrimaryV);
-
+               //Stand Alone Function for YY
+                void YY_fourMuonFit(edm::Handle< edm::View<pat::Muon> > muons,edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs);
 		virtual void beginJob();
 		virtual void analyze(const edm::Event &, const edm::EventSetup &);
 		virtual void endJob();
@@ -135,6 +136,7 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
                 vector<string> triggersToApply;
 		std::vector<double> OniaMassCuts_;
 		bool isMC_;
+                bool run_YY_SAF_;
                 bool isTriggerMatch_;
 		bool OnlyBest_;
 		bool OnlyGen_;
@@ -509,6 +511,7 @@ MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
 	pdgid_(iConfig.getParameter<uint32_t>("onia_pdgid")),
 	OniaMassCuts_(iConfig.getParameter<std::vector<double>>("onia_mass_cuts")),
 	isMC_(iConfig.getParameter<bool>("isMC")),
+        run_YY_SAF_(iConfig.getParameter<bool>("run_YY_SAF")),
         isTriggerMatch_(iConfig.getParameter<bool>("TriggerMatch")),
 	OnlyBest_(iConfig.getParameter<bool>("OnlyBest")),
 	OnlyGen_(iConfig.getParameter<bool>("OnlyGen")),
@@ -1996,16 +1999,23 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	float bestYMass = 1000;
 	pat::CompositeCandidate DimuonCand_bestYMass;
         if (verbose) cout<<"dimuonCand size: "<<dimuons->size()<<endl;
+        if (! OnlyGen_ && run_YY_SAF_)
+        {
+          //fourMuonFit(thisDimuonCand, tree_ups_part1, muons, bFieldHandle, bs, thePrimaryV);
+          YY_fourMuonFit(muons, bFieldHandle, bs); 
+         }
+    
+
 	if ( ! OnlyGen_ 
 			//&& dimuons.isValid() && dimuons->size() > 0 && theTriggerPassed) {
-                        && dimuons.isValid() && dimuons->size() > 0 ) {
+                        && dimuons.isValid() && dimuons->size() > 0 && ! run_YY_SAF_) {
 		for(pat::CompositeCandidateCollection::const_iterator dimuonCand=dimuons->begin();dimuonCand!= dimuons->end(); ++dimuonCand)
 		        {
 			if (dimuonCand->daughter("muon1")->charge() == dimuonCand->daughter("muon2")->charge() ) continue;
 			if (dimuonCand->daughter("muon1")->pt()<2.0 || dimuonCand->daughter("muon2")->pt()<2.0 ) continue;
 			if (fabs(dimuonCand->daughter("muon1")->eta())>2.4|| fabs(dimuonCand->daughter("muon2")->eta())>2.4) continue;
-                        if (verbose) cout<<"Muon 1 pT: "<< dimuonCand->daughter("muon1")->pt()<< "Eta: "<<dimuonCand->daughter("muon1")->eta()<<endl;
-                        if (verbose) cout<<"Muon 2 pT: "<< dimuonCand->daughter("muon2")->pt()<< "Eta: "<<dimuonCand->daughter("muon2")->eta()<<endl;
+                        if (verbose) cout<<"Muon 1 pT: "<< dimuonCand->daughter("muon1")->pt()<< "Eta: "<<dimuonCand->daughter("muon1")->eta()<<"charge: "<<dimuonCand->daughter("muon1")->charge()<<endl;
+                        if (verbose) cout<<"Muon 2 pT: "<< dimuonCand->daughter("muon2")->pt()<< "Eta: "<<dimuonCand->daughter("muon2")->eta()<<"charge: "<<dimuonCand->daughter("muon2")->charge()<<endl;
 			reco::TrackRef JpsiTk[2]={  //this is from Chib code
 				( dynamic_cast<const pat::Muon*>(dimuonCand->daughter("muon1") ) )->innerTrack(),
 				( dynamic_cast<const pat::Muon*>(dimuonCand->daughter("muon2") ) )->innerTrack()
@@ -2044,8 +2054,8 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	                ++nTriggeredUpsilonCand;
                         if (verbose) cout<<"Dimuon candidate has passed the Trigger matching with dimuon mass:"<<mumu_vFit_noMC->currentState().mass()<<endl; 
                         float thisdimuon_vtxprob = ChiSquaredProbability((double)(mumu_vFit_vertex_noMC->chiSquared()),(double)(mumu_vFit_vertex_noMC->degreesOfFreedom()));    
+                        if (verbose) cout<<"Dimuon mass constrained vetex fit: " <<thisdimuon_vtxprob<<endl;
 			if (thisdimuon_vtxprob < upsilon_vtx_cut) continue;
-                        if (verbose) cout<<"Dimuon candidate pass vertex value: "<<thisdimuon_vtxprob<<endl;
 			nGoodUpsilonCand++;
 			fillUpsilonVector(mumuVertexFitTree,thisDimuonCand,bFieldHandle,bs);
                         if (verbose) cout<<"Filled upsilon candidate"<<nGoodUpsilonCand<<endl;
@@ -2471,7 +2481,6 @@ int MuMuGammaRootupler::fourMuonMixFit(pat::CompositeCandidate dimuonCand, edm::
 					double mu4Py_fit_mix = fitMu4->currentState().kinematicParameters().momentum().y();
 					double mu4Pz_fit_mix = fitMu4->currentState().kinematicParameters().momentum().z();
 					fourMuFit_mu4p4_mix.SetXYZM( mu4Px_fit_mix, mu4Py_fit_mix, mu4Pz_fit_mix, mu4M_fit_mix );
-
 					reco::Candidate::LorentzVector v3 = mu3->p4();
 					reco::Candidate::LorentzVector v4 = mu4->p4();
 					mu3_p4_mix.SetPtEtaPhiM(v3.pt(),v3.eta(),v3.phi(),v3.mass());
@@ -2494,14 +2503,214 @@ int MuMuGammaRootupler::fourMuonMixFit(pat::CompositeCandidate dimuonCand, edm::
 	}
 	return nGoodFourMuonMix;
 }
+void MuMuGammaRootupler::YY_fourMuonFit(edm::Handle< edm::View<pat::Muon> > muons,edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs){
+    std::vector<pat::Muon> AllMuons;
+    vector<RefCountedKinematicTree> Chi;
+    vector<RefCountedKinematicParticle> Chi_1;
+    ParticleMass ups_m = upsilon_mass_;
+    float ups_m_sigma = upsilon_sigma_;
+    KinematicConstraint *ups_c = new MassKinematicConstraint(ups_m,ups_m_sigma);
+    for (edm::View<pat::Muon>::const_iterator recomu = muons->begin(), muend = muons->end(); recomu != muend; ++recomu){
+        if (recomu->pt()<2.0 || fabs(recomu->eta())>2.4)  continue;
+            AllMuons.push_back(*recomu);
+                  } // loop all reco muons
+        if (verbose) cout << "All Soft muons size: " <<AllMuons.size()<<endl;
+        // start Loop over all reco soft muons and make all dimuon candidates
+        double N_muons = AllMuons.size();
+        if (N_muons < 4 ) return;
+        int n_ups=0;
+        vector<int> All_ups_muindex1;
+        vector<int> All_ups_muindex2;
+        for (unsigned int i=0;i<N_muons;i++)
+        {
+        for(unsigned int j=i+1; j<N_muons; j++){
+            if((AllMuons[i].charge()+AllMuons[j].charge())!=0) continue;
+            TLorentzVector li, lj;
+            li.SetPtEtaPhiM(AllMuons[i].pt(),AllMuons[i].eta(),AllMuons[i].phi(),AllMuons[i].mass());
+            lj.SetPtEtaPhiM(AllMuons[j].pt(),AllMuons[j].eta(),AllMuons[j].phi(),AllMuons[j].mass());
+            TLorentzVector lilj = li+lj;
+            if (verbose) cout<<"Muon 1 pT: "<<AllMuons[i].pt()<<"Muon 1 ETa: "<<AllMuons[i].eta()<<"Muon1 Charge: "<<AllMuons[i].charge()<<endl;
+            if (verbose) cout<<"Muon 2 pT: "<<AllMuons[j].pt()<<"Muon 2 ETa: "<<AllMuons[j].eta()<<"Muon2 Charge: "<<AllMuons[j].charge()<<endl;
+            reco::TrackRef muTracki_ref = AllMuons[i].track();
+            reco::TrackRef muTrackj_ref = AllMuons[j].track();
+            reco::TransientTrack muoniTT(muTracki_ref, &(*bFieldHandle));
+            reco::TransientTrack muonjTT(muTrackj_ref, &(*bFieldHandle));
+            KinematicParticleFactoryFromTransientTrack mumuFactory;
+            std::vector<RefCountedKinematicParticle> mumuParticles;
+            mumuParticles.push_back(mumuFactory.particle (muoniTT, muonMass, float(0), float(0), muonSigma));
+            mumuParticles.push_back(mumuFactory.particle (muonjTT, muonMass, float(0), float(0), muonSigma));
+            KinematicParticleVertexFitter mumufitter;
+            RefCountedKinematicTree mumuVertexFitTree;
+            KinematicParticleFitter csFitter;
+            mumuVertexFitTree = mumufitter.fit(mumuParticles);
+            if (!(mumuVertexFitTree->isValid())) continue;
+            if (verbose) cout<<"This dimuon candidate has valid vertex fit"<<endl;
+            mumuVertexFitTree = csFitter.fit(ups_c, mumuVertexFitTree);
+            mumuVertexFitTree->movePointerToTheTop();
+            RefCountedKinematicParticle mumu_vFit_noMC;
+            RefCountedKinematicVertex mumu_vFit_vertex_noMC;
+            mumu_vFit_noMC = mumuVertexFitTree->currentParticle();
+            mumu_vFit_vertex_noMC = mumuVertexFitTree->currentDecayVertex();
+            float thisdimuon_mass = mumu_vFit_noMC->currentState().mass();
+            float thisdimuon_mass_error = sqrt( mumu_vFit_noMC->currentState().kinematicParametersError().matrix()(6,6) );
+            if (verbose) cout << "Dimuon mass:" <<thisdimuon_mass<<endl;
+            float thisdimuon_vtxprob = ChiSquaredProbability((double)(mumu_vFit_vertex_noMC->chiSquared()),(double)(mumu_vFit_vertex_noMC->degreesOfFreedom()));
+            if (verbose) cout<<" Dimuon mass constrained vetex fit:"<<thisdimuon_vtxprob<<endl;
+            if (thisdimuon_vtxprob < upsilon_vtx_cut) continue;
+            n_ups++;
+            Chi.push_back(mumuVertexFitTree);  
+            All_ups_muindex1.push_back(i);
+            All_ups_muindex2.push_back(j);
+            //fill vectors for upsilons candidates
+            v_mumufit_Mass.push_back(thisdimuon_mass);
+            v_mumufit_MassErr.push_back(thisdimuon_mass_error) ;
+            v_mumufit_VtxCL.push_back(thisdimuon_vtxprob);
+            v_mumufit_VtxCL2.push_back( mumu_vFit_vertex_noMC->chiSquared() );
+            v_mumufit_DecayVtxX.push_back( mumu_vFit_vertex_noMC->position().x() );
+            v_mumufit_DecayVtxY.push_back( mumu_vFit_vertex_noMC->position().y() );
+            v_mumufit_DecayVtxZ.push_back( mumu_vFit_vertex_noMC->position().z() );
+            v_mumufit_DecayVtxXE.push_back( mumu_vFit_vertex_noMC->error().cxx() );
+            v_mumufit_DecayVtxYE.push_back( mumu_vFit_vertex_noMC->error().cyy() );
+            v_mumufit_DecayVtxZE.push_back( mumu_vFit_vertex_noMC->error().czz() );
+            reco::TrackTransientTrack muon1TTT(muTracki_ref, &(*bFieldHandle));
+            reco::TrackTransientTrack muon2TTT(muTrackj_ref, &(*bFieldHandle));
+            v_mu1_d0.push_back( -muon1TTT.dxy(bs));
+            v_mu1_d0err.push_back( muon1TTT.d0Error());
+            v_mu1_dz.push_back( muon1TTT.dz());
+            v_mu1_dzerr.push_back( muon1TTT.dzError());
+            v_mu2_d0.push_back( -muon2TTT.dxy(bs));
+            v_mu2_d0err.push_back( muon2TTT.d0Error());
+            v_mu2_dz.push_back( muon2TTT.dz());
+            v_mu2_dzerr.push_back( muon2TTT.dzError());
+            v_mu1Charge.push_back( AllMuons[i].charge() );
+            v_mu2Charge.push_back( AllMuons[j].charge() );
+            if (verbose) cout<<" added Ups_muindex1: "<<i<<" ups_muindex2: "<<j<<endl;
+            } // Loop1 over all reco muons
+        } // Loop2 over all reco muons
+    if (verbose) cout<<" Total dimuon candidate: "<<n_ups<<endl;
 
-
+    for (int i=0; i<n_ups; i++) {
+        for (int j=i+1; j<n_ups; j++) {
+            int i1 = All_ups_muindex1[i]; int i2 = All_ups_muindex2[i];
+            int j1 = All_ups_muindex1[j]; int j2 = All_ups_muindex2[j];
+            if (verbose) cout<<"Muon 1 pT: "<<AllMuons[i1].pt()<<"Muon 1 ETa: "<<AllMuons[i1].eta()<<endl;
+            if (verbose) cout<<"Muon 2 pT: "<<AllMuons[i2].pt()<<"Muon 2 ETa: "<<AllMuons[i2].eta()<<endl;
+            if (verbose) cout<<"Muon 3 pT: "<<AllMuons[j1].pt()<<"Muon 3 ETa: "<<AllMuons[j1].eta()<<endl;
+            if (verbose) cout<<"Muon 4 pT: "<<AllMuons[j2].pt()<<"Muon 4 ETa: "<<AllMuons[j2].eta()<<endl;
+            if (i1 == j1 || i1 == j2 || i2 == j1 || i2 == j2) continue;
+            TLorentzVector mu_i1, mu_i2, mu_j1, mu_j2, fourMup4;
+            mu_i1.SetPtEtaPhiM(AllMuons[i1].pt(),AllMuons[i1].eta(),AllMuons[i1].phi(),AllMuons[i1].mass());
+            mu_i2.SetPtEtaPhiM(AllMuons[i2].pt(),AllMuons[i2].eta(),AllMuons[i2].phi(),AllMuons[i2].mass());
+            mu_j1.SetPtEtaPhiM(AllMuons[j1].pt(),AllMuons[j1].eta(),AllMuons[j1].phi(),AllMuons[j1].mass());
+            mu_j2.SetPtEtaPhiM(AllMuons[j2].pt(),AllMuons[j2].eta(),AllMuons[j2].phi(),AllMuons[j2].mass());
+            fourMup4 = mu_i1 + mu_i2 + mu_j1 + mu_j2;
+            fourMuFit_Mass_allComb.push_back(fourMup4.M());
+            reco::TrackRef muTrack1_ref = AllMuons[i1].track();
+            reco::TrackRef muTrack2_ref = AllMuons[i2].track();
+            reco::TrackRef muTrack3_ref = AllMuons[j1].track();
+            reco::TrackRef muTrack4_ref = AllMuons[j2].track();
+            reco::TransientTrack muon1TT(muTrack1_ref, &(*bFieldHandle));
+            reco::TransientTrack muon2TT(muTrack2_ref, &(*bFieldHandle));
+            reco::TransientTrack muon3TT(muTrack3_ref, &(*bFieldHandle));
+            reco::TransientTrack muon4TT(muTrack4_ref, &(*bFieldHandle));
+            KinematicParticleFactoryFromTransientTrack fourMuFactory;
+            std::vector<RefCountedKinematicParticle> fourMuParticles;
+            if (verbose) cout<<"after removing over laping muons"<<endl;
+            if (verbose) cout<<"Muon 1 pT: "<<AllMuons[i1].pt()<<"Muon 1 ETa: "<<AllMuons[i1].eta()<<endl;
+            if (verbose) cout<<"Muon 2 pT: "<<AllMuons[i2].pt()<<"Muon 2 ETa: "<<AllMuons[i2].eta()<<endl;
+            if (verbose) cout<<"Muon 3 pT: "<<AllMuons[j1].pt()<<"Muon 3 ETa: "<<AllMuons[j1].eta()<<endl;
+            if (verbose) cout<<"Muon 4 pT: "<<AllMuons[j2].pt()<<"Muon 4 ETa: "<<AllMuons[j2].eta()<<endl;
+            fourMuParticles.push_back(fourMuFactory.particle (muon1TT, muonMass, float(0), float(0), muonSigma));
+            fourMuParticles.push_back(fourMuFactory.particle (muon2TT, muonMass, float(0), float(0), muonSigma));
+            fourMuParticles.push_back(fourMuFactory.particle (muon3TT, muonMass, float(0), float(0), muonSigma));
+            fourMuParticles.push_back(fourMuFactory.particle (muon4TT, muonMass, float(0), float(0), muonSigma));
+            KinematicParticleVertexFitter  Fitter;
+            RefCountedKinematicTree fourMuTree = Fitter.fit(fourMuParticles);
+            if(fourMuTree->isEmpty()) continue;
+            fourMuTree->movePointerToTheTop();
+            RefCountedKinematicParticle fitFourMu = fourMuTree->currentParticle();
+            RefCountedKinematicVertex FourMuDecayVertex = fourMuTree->currentDecayVertex();
+            if (!(fitFourMu->currentState().isValid())) continue;
+            if (verbose) cout<<"Four muon mass: "<<fitFourMu->currentState().mass()<<endl;
+            if (verbose) cout<<"Four muon vertex probabilty: "<<ChiSquaredProbability((double)(FourMuDecayVertex->chiSquared()),(double)(FourMuDecayVertex->degreesOfFreedom()))<<endl;
+           vector<RefCountedKinematicParticle> Chi_1;
+           RefCountedKinematicTree treeupsilon_part1 = Chi[i];
+           RefCountedKinematicTree treeupsilon_part2 = Chi[j];
+           treeupsilon_part1->movePointerToTheTop();
+           RefCountedKinematicParticle upsilon_part1 = treeupsilon_part1->currentParticle();
+           Chi_1.push_back(upsilon_part1);
+           treeupsilon_part2->movePointerToTheTop();
+           RefCountedKinematicParticle upsilon_part2 = treeupsilon_part2->currentParticle();
+           Chi_1.push_back(upsilon_part2);
+           fourMuTree = Fitter.fit(Chi_1); //Two body (upsilon) Fit to get fourmu mass
+           if(fourMuTree->isEmpty()) continue;
+           if(!fourMuTree->isValid()) continue;
+           fitFourMu = fourMuTree->currentParticle();
+           if (verbose) cout<<"Four muon mass from two jpsi constrainted Fit: "<<fitFourMu->currentState().mass()<<endl;
+           fourMuFit_Mass.push_back(fitFourMu->currentState().mass());
+           fourMuFit_MassErr.push_back(sqrt(fitFourMu->currentState().kinematicParametersError().matrix()(6,6)));
+           TLorentzVector p4;
+           p4.SetXYZM(fitFourMu->currentState().kinematicParameters().momentum().x(),fitFourMu->currentState().kinematicParameters().momentum().y(),fitFourMu->currentState().kinematicParameters().momentum().z(),fitFourMu->currentState().mass());
+           fourMuFit_Pt.push_back(p4.Pt());
+           fourMuFit_Eta.push_back(p4.Eta());
+           fourMuFit_Phi.push_back(p4.Phi());
+           fourMuFit_VtxX.push_back(FourMuDecayVertex->position().x());
+           fourMuFit_VtxY.push_back(FourMuDecayVertex->position().y());
+           fourMuFit_VtxZ.push_back(FourMuDecayVertex->position().z());
+           fourMuFit_VtxProb.push_back(ChiSquaredProbability((double)(FourMuDecayVertex->chiSquared()),(double)(FourMuDecayVertex->degreesOfFreedom())));
+           fourMuFit_Chi2.push_back(FourMuDecayVertex->chiSquared());
+           fourMuFit_ndof.push_back(FourMuDecayVertex->degreesOfFreedom());
+           //get first muon //Childs are taken from JPsi 1 and 2
+           bool child = treeupsilon_part1->movePointerToTheFirstChild();
+           RefCountedKinematicParticle fitMu1 = treeupsilon_part1->currentParticle();
+           if(!child) break;
+           p4.SetXYZM( fitMu1->currentState().kinematicParameters().momentum().x(), fitMu1->currentState().kinematicParameters().momentum().y(),fitMu1->currentState().kinematicParameters().momentum().z(), fitMu1->currentState().mass() );
+           fourMuFit_mu1Pt.push_back(p4.Pt());
+           fourMuFit_mu1Eta.push_back(p4.Eta());
+           fourMuFit_mu1Phi.push_back(p4.Phi());
+           fourMuFit_mu1E.push_back(p4.E());
+           if (verbose) cout<<"post Fit mu1pt: "<<p4.Pt()<<"mu1eta: "<<p4.Eta()<<"mu1phi: "<<p4.Phi()<<"mu1E: "<<p4.E()<<endl;
+           //get second muon
+           child = treeupsilon_part1->movePointerToTheNextChild();
+           RefCountedKinematicParticle fitMu2 = treeupsilon_part1->currentParticle();
+           if(!child) break;
+           p4.SetXYZM( fitMu2->currentState().kinematicParameters().momentum().x(), fitMu2->currentState().kinematicParameters().momentum().y(),fitMu2->currentState().kinematicParameters().momentum().z(), fitMu2->currentState().mass() );
+           fourMuFit_mu2Pt.push_back(p4.Pt());
+           fourMuFit_mu2Eta.push_back(p4.Eta());
+           fourMuFit_mu2Phi.push_back(p4.Phi());
+           fourMuFit_mu2E.push_back(p4.E());
+           if (verbose) cout<<"post Fit mu2pt: "<<p4.Pt()<<"mu2eta: "<<p4.Eta()<<"mu2phi: "<<p4.Phi()<<"mu2E: "<<p4.E()<<endl;
+           //get third muon
+           child = treeupsilon_part2->movePointerToTheFirstChild();
+           RefCountedKinematicParticle fitMu3 = treeupsilon_part2->currentParticle();
+           if(!child) break;
+           p4.SetXYZM( fitMu3->currentState().kinematicParameters().momentum().x(), fitMu3->currentState().kinematicParameters().momentum().y(),fitMu3->currentState().kinematicParameters().momentum().z(), fitMu3->currentState().mass() );
+           fourMuFit_mu3Pt.push_back(p4.Pt());
+           fourMuFit_mu3Eta.push_back(p4.Eta());
+           fourMuFit_mu3Phi.push_back(p4.Phi());
+           fourMuFit_mu3E.push_back(p4.E());
+           if (verbose) cout<<"post Fit mu3pt: "<<p4.Pt()<<"mu3eta: "<<p4.Eta()<<"mu3phi: "<<p4.Phi()<<"mu3E: "<<p4.E()<<endl;
+           //get fourth muon
+           child = treeupsilon_part2->movePointerToTheNextChild();
+           RefCountedKinematicParticle fitMu4 = treeupsilon_part2->currentParticle();
+           if(!child) break;
+           p4.SetXYZM( fitMu4->currentState().kinematicParameters().momentum().x(), fitMu4->currentState().kinematicParameters().momentum().y(), fitMu4->currentState().kinematicParameters().momentum().z(), fitMu4->currentState().mass() );
+           fourMuFit_mu4Pt.push_back(p4.Pt());
+           fourMuFit_mu4Eta.push_back(p4.Eta());
+           fourMuFit_mu4Phi.push_back(p4.Phi());
+           fourMuFit_mu4E.push_back(p4.E());
+           if (verbose) cout<<"post Fit mu4pt: "<<p4.Pt()<<"mu4eta: "<<p4.Eta()<<"mu4phi: "<<p4.Phi()<<"mu4E: "<<p4.E()<<endl;
+        }// Loop2 over UPS candidates
+    } // Loop1 over UPS candidates
+} //end Stand Alone YY Fucntion
 void MuMuGammaRootupler::fourMuonFit(pat::CompositeCandidate dimuonCand, RefCountedKinematicTree treeupsilon_part1, edm::Handle< edm::View<pat::Muon> > muons, edm::ESHandle<MagneticField> bFieldHandle, reco::BeamSpot bs, reco::Vertex thePrimaryV){
 	std::vector<pat::Muon> theRestMuons;
         vector<RefCountedKinematicParticle> Chi_1;
         treeupsilon_part1->movePointerToTheTop();
         RefCountedKinematicParticle upsilon_part1 = treeupsilon_part1->currentParticle();
-        Chi_1.push_back(upsilon_part1); 
+        Chi_1.push_back(upsilon_part1);
+        if (verbose) cout<<"Muon 1 pT: "<< dimuonCand.daughter("muon1")->pt()<< "Eta: "<<dimuonCand.daughter("muon1")->eta()<<"charge: "<<dimuonCand.daughter("muon1")->charge()<<endl;
+        if (verbose) cout<<"Muon 2 pT: "<< dimuonCand.daughter("muon2")->pt()<< "Eta: "<<dimuonCand.daughter("muon2")->eta()<<"charge: "<<dimuonCand.daughter("muon2")->charge()<<endl; 
 	for (edm::View<pat::Muon>::const_iterator mu3 = muons->begin(), muend = muons->end(); mu3 != muend; ++mu3){
 		if (mu3->pt()<2.0 || fabs(mu3->eta())>2.4)  continue;
 		if (mu3-muons->begin() == dimuonCand.userInt("mu1Index"))  continue;
