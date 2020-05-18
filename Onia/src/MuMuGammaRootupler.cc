@@ -156,6 +156,9 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 	        int Total_events_dimuon;
 	        int Total_events_dimuon_trg_matched;
                 int Total_events_Fourmuon;
+                int nGoodUpsilonCand ;
+                int nTriggeredUpsilonCand ;
+                int nTriggeredFourMuonCand ;
 		UInt_t run;
 		UInt_t lumi;
 		UInt_t event;
@@ -1992,9 +1995,9 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
         ParticleMass ups_m = upsilon_mass_;
         float ups_m_sigma = upsilon_sigma_;
         KinematicConstraint *ups_c = new MassKinematicConstraint(ups_m,ups_m_sigma);
-	int nGoodUpsilonCand = 0;
-        int nTriggeredUpsilonCand = 0;
-        int nTriggeredFourMuonCand = 0;
+	nGoodUpsilonCand = 0;
+        nTriggeredUpsilonCand = 0;
+        nTriggeredFourMuonCand = 0;
         bool dimuon_trigger_matched=false;
 	float bestYMass = 1000;
 	pat::CompositeCandidate DimuonCand_bestYMass;
@@ -2558,6 +2561,7 @@ void MuMuGammaRootupler::YY_fourMuonFit(edm::Handle< edm::View<pat::Muon> > muon
             if (verbose) cout<<" Dimuon mass constrained vetex fit:"<<thisdimuon_vtxprob<<endl;
             if (thisdimuon_vtxprob < upsilon_vtx_cut) continue;
             n_ups++;
+            nGoodUpsilonCand++;
             Chi.push_back(mumuVertexFitTree);  
             All_ups_muindex1.push_back(i);
             All_ups_muindex2.push_back(j);
