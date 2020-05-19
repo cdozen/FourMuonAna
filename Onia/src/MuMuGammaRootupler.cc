@@ -278,6 +278,8 @@ class MuMuGammaRootupler:public edm::EDAnalyzer {
 		std::vector<Float_t> fourMuFit_VtxY;
 		std::vector<Float_t> fourMuFit_VtxZ;
 		std::vector<Float_t> fourMuFit_VtxProb;
+                std::vector<Float_t> fourMuFit_ups1_VtxProb;
+                std::vector<Float_t> fourMuFit_ups2_VtxProb;
 		std::vector<Float_t> fourMuFit_Chi2;
 		std::vector<Int_t> fourMuFit_ndof;
 		std::vector<Float_t> fourMuFit_mu1Pt;
@@ -664,6 +666,8 @@ MuMuGammaRootupler::MuMuGammaRootupler(const edm::ParameterSet & iConfig):
 		onia_tree->Branch("fourMuFit_VtxY",&fourMuFit_VtxY);
 		onia_tree->Branch("fourMuFit_VtxZ",&fourMuFit_VtxZ);
 		onia_tree->Branch("fourMuFit_VtxProb",&fourMuFit_VtxProb);
+                onia_tree->Branch("fourMuFit_ups1_VtxProb",&fourMuFit_ups1_VtxProb);
+                onia_tree->Branch("fourMuFit_ups2_VtxProb",&fourMuFit_ups2_VtxProb);
 		onia_tree->Branch("fourMuFit_Chi2",&fourMuFit_Chi2);
 		onia_tree->Branch("fourMuFit_ndof",&fourMuFit_ndof);
 		onia_tree->Branch("fourMuFit_mu1Pt",&fourMuFit_mu1Pt);
@@ -1666,6 +1670,8 @@ void MuMuGammaRootupler::analyze(const edm::Event & iEvent, const edm::EventSetu
 	fourMuFit_VtxY.clear();
 	fourMuFit_VtxZ.clear();
 	fourMuFit_VtxProb.clear();
+        fourMuFit_ups1_VtxProb.clear();
+        fourMuFit_ups2_VtxProb.clear();
 	fourMuFit_Chi2.clear();
 	fourMuFit_ndof.clear();
 	fourMuFit_mu1Pt.clear();
@@ -2592,7 +2598,6 @@ void MuMuGammaRootupler::YY_fourMuonFit(edm::Handle< edm::View<pat::Muon> > muon
             } // Loop1 over all reco muons
         } // Loop2 over all reco muons
     if (verbose) cout<<" Total dimuon candidate: "<<n_ups<<endl;
-
     for (int i=0; i<n_ups; i++) {
         for (int j=i+1; j<n_ups; j++) {
             int i1 = All_ups_muindex1[i]; int i2 = All_ups_muindex2[i];
@@ -2662,6 +2667,8 @@ void MuMuGammaRootupler::YY_fourMuonFit(edm::Handle< edm::View<pat::Muon> > muon
            fourMuFit_VtxY.push_back(FourMuDecayVertex->position().y());
            fourMuFit_VtxZ.push_back(FourMuDecayVertex->position().z());
            fourMuFit_VtxProb.push_back(ChiSquaredProbability((double)(FourMuDecayVertex->chiSquared()),(double)(FourMuDecayVertex->degreesOfFreedom())));
+           fourMuFit_ups1_VtxProb.push_back(v_mumufit_VtxCL[i]);
+           fourMuFit_ups2_VtxProb.push_back(v_mumufit_VtxCL[j]);
            fourMuFit_Chi2.push_back(FourMuDecayVertex->chiSquared());
            fourMuFit_ndof.push_back(FourMuDecayVertex->degreesOfFreedom());
            //get first muon //Childs are taken from JPsi 1 and 2

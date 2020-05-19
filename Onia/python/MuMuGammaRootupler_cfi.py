@@ -16,8 +16,8 @@ rootuple = cms.EDAnalyzer('MuMuGammaRootupler',
                           OnlyBest = cms.bool(False),
                           OnlyGen = cms.bool(False),
                           TriggerMatch = cms.bool(False),
-                          #VERBOSE = cms.untracked.bool(False),              
-                          VERBOSE = cms.untracked.bool(True), 
+                          VERBOSE = cms.untracked.bool(False),              
+                          #VERBOSE = cms.untracked.bool(True), 
                           triggerList = cms.untracked.vstring(
                                     #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v',       #2018  HLT string
                                     #'HLT_TrimuonOpen_5_3p5_2_Upsilon_Muon_v',  #2018 HLT string
@@ -29,7 +29,7 @@ rootuple = cms.EDAnalyzer('MuMuGammaRootupler',
                                     #'HLT_Dimuon8_Upsilon_Barrel_v',           #2016 HLT string
                               ), 
  		          upsilon_mass = cms.double(9.4630), #9.4603. 3.0969
-                          upsilon_sigma = cms.double(0.0001),
+                          upsilon_sigma = cms.double(0.0004),
                           upsilon_vertex_CL_cut = cms.double(0.005), 
 		          triggerCuts = cms.uint32(36),  # 36 for Upsilon, 73 for Jpsi
                           TRG_Match_DR = cms.double(0.3),
